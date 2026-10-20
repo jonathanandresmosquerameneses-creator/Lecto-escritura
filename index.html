@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LectoMente | Aprender jugando</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-badge">🎵</div>
+          <span>LectoMente</span>
+        </div>
+        <nav id="studentNav" class="nav" hidden>
+          <a href="#inicio">Inicio</a>
+          <a href="#principios">Aprendizajes</a>
+          <a href="#retos">Retos</a>
+        </nav>
+        <div id="profileBadge" class="score-badge" hidden>
+          <span class="profile-avatar" aria-hidden="true">✦</span>
+          <span>Mi progreso</span>
+          <strong><span id="scoreDisplay">0</span> puntos</strong>
+        </div>
+        <button id="changeGradeButton" class="logout-btn" type="button" hidden>Cambiar grado</button>
+        <button id="logoutButton" class="logout-btn" type="button" hidden>Cerrar sesión</button>
+      </header>
+
+      <section id="authScreen" class="auth-card" aria-labelledby="authTitle">
+        <span class="eyebrow">Tu espacio de aprendizaje</span>
+        <h1 id="authTitle">Ingresa a LectoMente</h1>
+        <p id="authDescription">Inicia sesión para continuar con tus actividades.</p>
+        <form id="authForm" class="auth-form">
+          <div class="field-group">
+            <label for="studentName">Usuario</label>
+            <input id="studentName" name="name" autocomplete="username" minlength="2" maxlength="60" required />
+          </div>
+          <div class="field-group">
+            <label for="studentPassword">Contraseña</label>
+            <input id="studentPassword" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required />
+          </div>
+          <button id="authSubmit" class="primary-btn form-btn" type="submit">Iniciar sesión</button>
+        </form>
+        <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+        <button id="authToggle" class="auth-toggle" type="button">¿No tienes cuenta? Regístrate</button>
+      </section>
+
+      <section id="gradeScreen" class="auth-card" aria-labelledby="gradeTitle" hidden>
+        <span class="eyebrow">Personaliza tu aprendizaje</span>
+        <h1 id="gradeTitle">¿En qué grado estás?</h1>
+        <p>Elige tu grado para ver únicamente sus temas y actividades.</p>
+        <form id="gradeForm" class="auth-form">
+          <div class="field-group">
+            <label for="gradeSelect">Grado</label>
+            <select id="gradeSelect" name="grade" required>
+              <option value="">Selecciona tu grado</option>
+              <option value="4">Cuarto grado</option>
+              <option value="5">Quinto grado</option>
+            </select>
+          </div>
+          <button class="primary-btn form-btn" type="submit">Ver mis temas</button>
+        </form>
+        <p id="gradeMessage" class="auth-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <main id="studentApp" hidden>
+        <section class="student-form-card profile-card" aria-labelledby="profileTitle">
+          <div>
+            <span class="eyebrow">Tu espacio de aprendizaje</span>
+            <h2 id="profileTitle">¡Hola, estudiante!</h2>
+            <p>Continúa aprendiendo a tu ritmo en <strong id="profileGrade"></strong>. Tu avance se guarda en este dispositivo.</p>
+          </div>
+          <div class="profile-stats">
+            <strong><span id="profilePoints">0</span> puntos</strong>
+            <span><span id="profileChallenges">0</span> retos completados</span>
+          </div>
+        </section>
+
+        <section id="inicio" class="hero" aria-label="Bienvenida">
+          <div>
+            <div id="gradeEyebrow" class="eyebrow">Aula de lectura y escritura</div>
+            <h1 id="heroTitle">Aprende leyendo, pensando y creando.</h1>
+            <p>
+              Explora actividades para fortalecer tus habilidades de lenguaje y avanzar
+              a tu propio ritmo.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-btn" href="#retos">Explorar retos <span aria-hidden="true">→</span></a>
+              <a class="secondary-btn" href="#principios">Conocer el aula</a>
+            </div>
+            <div class="mini-stats">
+              <div class="stat-card">
+                <strong id="gradeStat">4.º–5.º</strong>
+                <span>Primaria</span>
+              </div>
+              <div class="stat-card">
+                <strong>📖</strong>
+                <span>Lectura</span>
+              </div>
+              <div class="stat-card">
+                <strong>✍️</strong>
+                <span>Escritura</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <img
+              class="hero-image"
+              src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1000&q=85"
+              alt="Estudiante leyendo y aprendiendo"
+            />
+            <span class="card-tag">Aprendizaje a tu ritmo</span>
+            <ul class="objectives">
+              <li><span class="objective-icon">📖</span> Leer con atención.</li>
+              <li><span class="objective-icon">🧠</span> Pensar y resolver.</li>
+              <li><span class="objective-icon">✍️</span> Expresar tus ideas.</li>
+              <li><span class="objective-icon">🏅</span> Reconocer tu progreso.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="principios" class="learning-section" aria-labelledby="learningTitle">
+          <div class="section-heading">
+            <span class="eyebrow">Temas de tu grado</span>
+            <h2 id="learningTitle" class="section-title">Aprendizajes y actividades</h2>
+            <p id="learningDescription">Explora los temas, las actividades y los recursos de tu grado.</p>
+          </div>
+          <div id="grade4Content" class="grade-content" hidden>
+            <h3>Temas de cuarto grado</h3>
+            <ul class="grade-topic-list">
+              <li><strong>Textos informativos y expositivos:</strong> noticias, biografías y relatos históricos.</li>
+              <li>Plan de escritura, revisión y corrección de textos propios.</li>
+              <li>Clasificación de palabras según el acento: agudas, graves y esdrújulas.</li>
+              <li>Uso correcto de signos de puntuación y de las mayúsculas.</li>
+              <li>El debate.</li>
+              <li>Oraciones simples y compuestas.</li>
+              <li>El ensayo.</li>
+              <li>El resumen.</li>
+            </ul>
+          </div>
+          <div id="grade5Content" class="grade-content" hidden>
+            <h3>Temas de quinto grado</h3>
+            <div class="curriculum-table-wrap">
+              <table class="curriculum-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Temas</th>
+                    <th scope="col">Logros</th>
+                    <th scope="col">Indicadores de desempeño</th>
+                    <th scope="col">Actividades</th>
+                    <th scope="col">Recursos y evaluación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Técnicas para resumir</th>
+                    <td>Comprende la importancia del resumen como estrategia para organizar la información.</td>
+                    <td>Identifica las ideas principales y secundarias de un texto y redacta resúmenes breves.</td>
+                    <td>Lectura de un texto, subrayado de ideas principales y elaboración de un resumen.</td>
+                    <td>Textos, cuaderno y resaltadores. Evaluación: elaboración de un resumen.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Trabajo escrito</th>
+                    <td>Reconoce la estructura y las características de un trabajo escrito.</td>
+                    <td>Organiza información con título, introducción, desarrollo, conclusión y fuentes consultadas.</td>
+                    <td>Consulta de un tema, organización de ideas y elaboración de un trabajo escrito.</td>
+                    <td>Libros, cuaderno y hojas. Evaluación: presentación del trabajo.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Receso académico</th>
+                    <td>No aplica.</td>
+                    <td>No aplica.</td>
+                    <td>No se programan clases.</td>
+                    <td>Receso académico.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">La mímica</th>
+                    <td>Reconoce la expresión corporal como una forma de comunicación no verbal.</td>
+                    <td>Representa mensajes, emociones y situaciones mediante gestos y movimientos corporales.</td>
+                    <td>Juego de adivinanzas con gestos y representación de situaciones cotidianas.</td>
+                    <td>Tarjetas con palabras y situaciones. Evaluación: participación y claridad de los mensajes.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">La exposición</th>
+                    <td>Desarrolla habilidades para comunicar información de manera oral, clara y organizada.</td>
+                    <td>Presenta un tema siguiendo una secuencia lógica y utiliza un tono de voz adecuado.</td>
+                    <td>Preparación de una exposición breve con apoyo visual y presentación ante el grupo.</td>
+                    <td>Carteleras, imágenes y fichas. Evaluación: dominio del tema, claridad y expresión oral.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">El teatro</th>
+                    <td>Comprende el teatro como una manifestación artística que combina expresión oral y corporal.</td>
+                    <td>Interpreta un personaje y participa en una representación teatral respetando los turnos y el trabajo en equipo.</td>
+                    <td>Lectura de un guion, distribución de personajes y ensayo de una escena corta.</td>
+                    <td>Guiones, vestuario sencillo y utilería. Evaluación: expresión, creatividad y participación.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Repaso e integración de los temas</th>
+                    <td>Aplica estrategias de comunicación oral, escrita y corporal en diferentes situaciones.</td>
+                    <td>Elabora un resumen, organiza un escrito y participa en actividades de expresión oral y teatral.</td>
+                    <td>Taller integrador y preparación de una presentación grupal.</td>
+                    <td>Guías, textos y materiales de apoyo. Evaluación: taller práctico.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Evaluación y cierre</th>
+                    <td>Demuestra los aprendizajes adquiridos durante el periodo.</td>
+                    <td>Aplica las técnicas de resumen y demuestra habilidades básicas de expresión oral y corporal.</td>
+                    <td>Actividad corta de repaso y autoevaluación.</td>
+                    <td>Cuaderno y guía. Evaluación: actividad de síntesis.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="puntaje" class="games" aria-label="Tu puntaje">
+          <div class="score-panel">
+            <div>
+              <h3>Tu puntaje de aprendizaje</h3>
+              <strong id="totalScore">0</strong>
+            </div>
+            <p>Se valoran tus ideas, tus explicaciones y cada mejora que haces en tus textos.</p>
+          </div>
+        </section>
+
+        <section id="retos" class="challenge-list" aria-labelledby="challengesTitle">
+          <span class="eyebrow">Tu próxima aventura</span>
+          <h2 id="challengesTitle" class="section-title challenge-heading">Retos semanales</h2>
+          <p class="challenge-schedule">Completa un reto para desbloquear el siguiente. Hay cinco retos en total.</p>
+          <div class="weekly-challenges">
+            <a class="challenge-card weekly-challenge-card" href="reto.html?reto=1" data-challenge="1">
+              <span class="challenge-status"></span>
+              <h3>Reto semanal 1</h3>
+              <p id="challengeDescription">Actividades de lectura, escritura y expresión</p>
+              <span class="challenge-link-label">Abrir desafío →</span>
+            </a>
+            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="2" aria-disabled="true">
+              <span class="challenge-status"></span>
+              <h3>Reto semanal 2</h3>
+              <p class="challenge-placeholder"></p>
+            </article>
+            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="3" aria-disabled="true">
+              <span class="challenge-status"></span>
+              <h3>Reto semanal 3</h3>
+              <p class="challenge-placeholder"></p>
+            </article>
+            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="4" aria-disabled="true">
+              <span class="challenge-status"></span>
+              <h3>Reto semanal 4</h3>
+              <p class="challenge-placeholder"></p>
+            </article>
+            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="5" aria-disabled="true">
+              <span class="challenge-status"></span>
+              <h3>Reto semanal 5</h3>
+              <p class="challenge-placeholder"></p>
+            </article>
+          </div>
+        </section>
+        <nav class="section-pager" aria-label="Cambiar de página">
+          <button id="previousSection" class="pager-button pager-previous" type="button">
+            <span aria-hidden="true">←</span> Anterior
+          </button>
+          <div class="pager-indicator">
+            <span class="pager-page-label">Página</span>
+            <span id="currentSection">1</span>
+            <span class="pager-divider">/</span>
+            <span id="sectionCount">4</span>
+            <span id="sectionName">Inicio</span>
+          </div>
+          <div class="pager-dots" aria-label="Páginas">
+            <button class="pager-dot is-current" type="button" data-section-index="0" aria-label="Ir a Inicio" aria-current="step"></button>
+            <button class="pager-dot" type="button" data-section-index="1" aria-label="Ir a Aprendizajes"></button>
+            <button class="pager-dot" type="button" data-section-index="2" aria-label="Ir a Puntaje"></button>
+            <button class="pager-dot" type="button" data-section-index="3" aria-label="Ir a Retos"></button>
+          </div>
+          <button id="nextSection" class="pager-button pager-next" type="button">
+            Siguiente <span aria-hidden="true">→</span>
+          </button>
+        </nav>
+      </main>
+      <footer class="site-footer">
+        <a class="footer-brand" href="#inicio">📚 LectoMente</a>
+        <p>Un espacio para leer, pensar y crear.</p>
+        <nav aria-label="Navegación del pie de página">
+          <a href="#inicio">Inicio</a>
+          <a href="#principios">Aprendizajes</a>
+          <a href="#retos">Retos</a>
+        </nav>
+      </footer>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script>
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const totalScore = document.getElementById('totalScore');
+      const authScreen = document.getElementById('authScreen');
+      const gradeScreen = document.getElementById('gradeScreen');
+      const studentApp = document.getElementById('studentApp');
+      const pageSections = ['inicio', 'principios', 'puntaje', 'retos']
+        .map((id) => document.getElementById(id));
+      const sectionNames = ['Inicio', 'Aprendizajes', 'Puntaje', 'Retos'];
+      let activeSection = 0;
+      let currentUser = null;
+      let points = 0;
+      let completedChallenges = [];
+      let isRegistering = false;
+      let pointsKey = '';
+      let completedChallengesKey = '';
+
+      function setAuthMessage(message) {
+        document.getElementById('authMessage').textContent = message;
+      }
+
+      function showGradePicker(user) {
+        currentUser = user;
+        authScreen.hidden = true;
+        studentApp.hidden = true;
+        gradeScreen.hidden = false;
+        document.getElementById('studentNav').hidden = true;
+        document.getElementById('profileBadge').hidden = true;
+        document.getElementById('changeGradeButton').hidden = true;
+        document.getElementById('logoutButton').hidden = false;
+        document.getElementById('gradeSelect').value = user.grade ? String(user.grade) : '';
+        document.getElementById('gradeMessage').textContent = '';
+      }
+
+      function showStudentApp(user) {
+        currentUser = user;
+        const grade = user.grade;
+        const gradeLabel = grade === 4 ? 'cuarto grado' : 'quinto grado';
+        pointsKey = `lectomente-usuario-${user.id}-grado-${grade}-puntos`;
+        completedChallengesKey = `lectomente-usuario-${user.id}-grado-${grade}-retos-completados`;
+        const savedGradeData = user.gradeData && user.gradeData[String(grade)];
+        points = Number(savedGradeData ? savedGradeData.points : localStorage.getItem(pointsKey)) || 0;
+        completedChallenges = [];
+        try {
+          const savedChallenges = savedGradeData
+            ? savedGradeData.completedChallenges
+            : JSON.parse(localStorage.getItem(completedChallengesKey) || '[]');
+          if (Array.isArray(savedChallenges)) {
+            completedChallenges = savedChallenges.filter((challenge) => Number.isInteger(challenge) && challenge >= 1 && challenge <= 5);
+          }
+        } catch (error) {
+          console.error('No se pudo cargar el progreso de los retos semanales.', error);
+        }
+        localStorage.setItem(pointsKey, points);
+        localStorage.setItem(completedChallengesKey, JSON.stringify(completedChallenges));
+
+        authScreen.hidden = true;
+        gradeScreen.hidden = true;
+        studentApp.hidden = false;
+        document.getElementById('studentNav').hidden = false;
+        document.getElementById('profileBadge').hidden = false;
+        document.getElementById('changeGradeButton').hidden = false;
+        document.getElementById('logoutButton').hidden = false;
+        document.getElementById('profileTitle').textContent = `¡Hola, ${user.name}!`;
+        document.getElementById('profileGrade').textContent = gradeLabel;
+        document.getElementById('gradeEyebrow').textContent = `Aula de lectura y escritura · ${gradeLabel}`;
+        document.getElementById('heroTitle').textContent = `Aprende, crea y descubre en ${gradeLabel}.`;
+        document.getElementById('gradeStat').textContent = grade === 4 ? '4.º' : '5.º';
+        document.getElementById('grade4Content').hidden = grade !== 4;
+        document.getElementById('grade5Content').hidden = grade !== 5;
+        document.getElementById('challengeDescription').textContent = grade === 4
+          ? 'Noticia escolar, escritura y debate'
+          : 'Resumen, trabajo escrito, mímica y teatro';
+        document.getElementById('learningDescription').textContent = grade === 4
+          ? 'Explora los temas de lectura, escritura, gramática y expresión de cuarto grado.'
+          : 'Consulta los logros, actividades y recursos de quinto grado.';
+        updateScore();
+        renderWeeklyChallenges();
+        setActiveSection(0);
+      }
+
+      document.getElementById('authForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const name = form.elements.name.value;
+        const password = form.elements.password.value;
+        const submitButton = document.getElementById('authSubmit');
+        submitButton.disabled = true;
+        setAuthMessage('');
+        try {
+          const user = isRegistering
+            ? await window.LectoMente.register(name, password)
+            : await window.LectoMente.login(name, password);
+          showGradePicker(user);
+        } catch (error) {
+          setAuthMessage(error.message);
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.getElementById('authToggle').addEventListener('click', () => {
+        isRegistering = !isRegistering;
+        document.getElementById('authTitle').textContent = isRegistering ? 'Crea tu cuenta' : 'Ingresa a LectoMente';
+        document.getElementById('authDescription').textContent = isRegistering
+          ? 'Regístrate para guardar tu avance y elegir tu grado.'
+          : 'Inicia sesión para continuar con tus actividades.';
+        document.getElementById('authSubmit').textContent = isRegistering ? 'Crear cuenta' : 'Iniciar sesión';
+        document.getElementById('studentPassword').autocomplete = isRegistering ? 'new-password' : 'current-password';
+        document.getElementById('authToggle').textContent = isRegistering
+          ? '¿Ya tienes cuenta? Inicia sesión'
+          : '¿No tienes cuenta? Regístrate';
+        setAuthMessage('');
+      });
+
+      document.getElementById('gradeForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const grade = Number(document.getElementById('gradeSelect').value);
+        const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        document.getElementById('gradeMessage').textContent = '';
+        try {
+          const user = await window.LectoMente.setGrade(grade);
+          showStudentApp(user);
+          if (window.location.hash) {
+            const target = document.getElementById(window.location.hash.slice(1));
+            if (target) target.scrollIntoView();
+          }
+        } catch (error) {
+          document.getElementById('gradeMessage').textContent = error.message;
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.getElementById('changeGradeButton').addEventListener('click', () => showGradePicker(currentUser));
+      document.getElementById('logoutButton').addEventListener('click', async () => {
+        const button = document.getElementById('logoutButton');
+        button.disabled = true;
+        try {
+          await window.LectoMente.logout();
+          window.location.reload();
+        } catch (error) {
+          showGradePicker(currentUser);
+          document.getElementById('gradeMessage').textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      function updateScore() {
+        scoreDisplay.textContent = points;
+        totalScore.textContent = points;
+        document.getElementById('profilePoints').textContent = points;
+        document.getElementById('profileChallenges').textContent = completedChallenges.length;
+        localStorage.setItem(pointsKey, points);
+      }
+
+      function renderWeeklyChallenges() {
+        document.querySelectorAll('.weekly-challenge-card').forEach((card) => {
+          const challengeNumber = Number(card.dataset.challenge);
+          const status = card.querySelector('.challenge-status');
+          const isUnlocked = challengeNumber === 1 || completedChallenges.includes(challengeNumber - 1);
+          const isComplete = completedChallenges.includes(challengeNumber);
+
+          card.classList.toggle('is-locked', !isUnlocked);
+          card.classList.toggle('is-unlocked', isUnlocked && challengeNumber > 1);
+          card.classList.toggle('is-complete', isComplete);
+
+          if (challengeNumber === 1) {
+            status.textContent = isComplete ? 'Completado' : 'Disponible';
+            return;
+          }
+
+          if (isComplete) {
+            status.textContent = 'Completado';
+            card.querySelector('.challenge-placeholder').textContent = 'Reto completado.';
+          } else if (isUnlocked) {
+            status.textContent = 'Desbloqueado';
+            card.querySelector('.challenge-placeholder').textContent = 'Contenido pendiente.';
+          } else {
+            status.textContent = 'Bloqueado';
+            card.querySelector('.challenge-placeholder').textContent = '';
+          }
+        });
+      }
+
+      function setActiveSection(index) {
+        activeSection = Math.max(0, Math.min(index, pageSections.length - 1));
+        document.getElementById('sectionCount').textContent = pageSections.length;
+        document.getElementById('currentSection').textContent = activeSection + 1;
+        document.getElementById('sectionName').textContent = sectionNames[activeSection];
+        document.getElementById('previousSection').disabled = activeSection === 0;
+        document.getElementById('nextSection').disabled = activeSection === pageSections.length - 1;
+        document.querySelectorAll('.pager-dot').forEach((dot, index) => {
+          const isCurrent = index === activeSection;
+          dot.classList.toggle('is-current', isCurrent);
+          if (isCurrent) dot.setAttribute('aria-current', 'step');
+          else dot.removeAttribute('aria-current');
+        });
+      }
+
+      function showSection(index) {
+        setActiveSection(index);
+        pageSections[activeSection].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      document.getElementById('previousSection').addEventListener('click', () => showSection(activeSection - 1));
+      document.getElementById('nextSection').addEventListener('click', () => showSection(activeSection + 1));
+      document.querySelectorAll('.pager-dot').forEach((dot) => {
+        dot.addEventListener('click', () => showSection(Number(dot.dataset.sectionIndex)));
+      });
+
+      if ('IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver((entries) => {
+          const visibleSection = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0];
+          if (visibleSection) {
+            const index = pageSections.indexOf(visibleSection.target);
+            if (index !== -1 && index !== activeSection) setActiveSection(index);
+          }
+        }, { threshold: [0.25, 0.5, 0.75] });
+        pageSections.forEach((section) => sectionObserver.observe(section));
+      }
+
+      window.LectoMente.session().then((user) => {
+        if (user) showGradePicker(user);
+        else authScreen.hidden = false;
+      }).catch((error) => {
+        setAuthMessage(error.message);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Misión de aprendizaje | LectoMente</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="retos-page">
+    <div class="page-shell">
+      <header class="reto-topbar">
+        <a class="reto-brand" href="index.html">
+          <span class="brand-badge">🎵</span>
+          <span id="retoBrandTitle">Misión de aprendizaje</span>
+        </a>
+        <nav class="reto-menu" aria-label="Menú principal">
+          <a href="index.html">Inicio</a>
+          <a href="#missionOverview">Misión</a>
+          <a href="#phaseNav">Fases</a>
+        </nav>
+        <span class="reto-score">Puntos: <strong id="retoScore">0</strong></span>
+      </header>
+
+      <main class="reto-content">
+        <section id="missionOverview" class="challenge-intro" aria-labelledby="missionTitle">
+          <span id="missionTag" class="mission-tag">Misión de aprendizaje</span>
+          <h1 id="missionTitle">Aprendemos leyendo, escribiendo y creando</h1>
+          <p class="challenge-audience">Para estudiantes de 4.º y 5.º de primaria (9 a 11 años)</p>
+          <p>
+            Explora las actividades preparadas para tu grado. Cada misión practica temas
+            diferentes mediante lectura, escritura y expresión.
+          </p>
+          <details class="challenge-details">
+            <summary>Conoce el propósito y cómo se evalúa</summary>
+            <div class="challenge-details-content">
+              <h2>Competencia central</h2>
+              <p>
+                Comprender textos, organizar ideas, comunicar opiniones y crear producciones
+                propias con autonomía, pensamiento crítico y creatividad.
+              </p>
+              <h2>Gamificación con propósito</h2>
+              <p>
+                Gana puntos por comprender, explicar, resolver, revisar y mejorar. Una
+                respuesta sin justificación puede recibir puntaje parcial. Tienes tres
+                oportunidades por fase y pistas progresivas para seguir razonando sin
+                revelar la solución.
+              </p>
+              <h2>Evidencias de aprendizaje</h2>
+              <p>
+                Se guardan tus respuestas, explicaciones, decisiones, borradores, versión
+                corregida y autoevaluación. Importan tu proceso y tu evolución, no solo
+                cuántas respuestas aciertas.
+              </p>
+              <p class="challenge-principle">
+                Cada actividad practica habilidades de tu grado y te permite demostrar
+                lo que sabes a través de la lectura, la escritura y la expresión.
+              </p>
+            </div>
+          </details>
+          <div id="missionSummary" class="challenge-song">
+            <strong>Reto de esta misión:</strong>
+            <span id="missionSummaryText">Completa las cinco actividades y guarda tus aprendizajes.</span>
+          </div>
+        </section>
+        <div class="reto-layout">
+          <aside class="reto-sidebar" aria-label="Recorrido de la misión">
+            <span class="reto-sidebar-label">TU CAMINO</span>
+            <h2 id="missionSidebarTitle">Tu misión</h2>
+            <nav id="phaseNav" class="reto-steps" aria-label="Fases de la misión"></nav>
+            <div class="reto-lives" aria-live="polite">
+              <strong>Oportunidades</strong>
+              <span id="retoLives">♥ ♥ ♥</span>
+            </div>
+            <div class="reto-tip">
+              <span class="reto-tip-icon" aria-hidden="true">✦</span>
+              <p id="retoTip">Lee con calma y piensa antes de responder.</p>
+            </div>
+          </aside>
+
+          <section class="reto-panel" aria-labelledby="retoTitle">
+            <div class="reto-panel-topline">
+              <span id="retoCount" class="reto-count"></span>
+              <span id="retoPoints" class="reto-points"></span>
+            </div>
+            <div
+              class="reto-progress-bar"
+              role="progressbar"
+              aria-label="Progreso de la misión"
+              aria-valuemin="0"
+              aria-valuemax="5"
+              id="retoProgressTrack"
+            ><div id="retoProgress" class="reto-progress-fill"></div></div>
+            <h1 id="retoTitle"></h1>
+            <p id="retoPrompt" class="reto-prompt"></p>
+            <div id="retoActivity" class="reto-activity"></div>
+            <div class="reto-support">
+              <button id="hintButton" class="secondary-btn" type="button">Pedir una pista</button>
+              <p id="hintText" class="hint-text" aria-live="polite"></p>
+            </div>
+            <p id="retoFeedback" class="feedback" aria-live="polite"></p>
+            <nav class="reto-navigation" aria-label="Navegación de fases">
+              <a id="previousReto" class="secondary-btn" href="#">Fase anterior</a>
+              <a id="nextReto" class="primary-btn" href="#">Siguiente fase</a>
+            </nav>
+          </section>
+        </div>
+      </main>
+      <footer class="site-footer reto-footer">
+        <a class="footer-brand" href="index.html">🎵 LectoMente</a>
+        <p id="missionFooter">Lectura, escritura y expresión</p>
+        <nav aria-label="Navegación del pie de página">
+          <a href="index.html">Inicio</a>
+          <a href="#missionOverview">Propósito de la misión</a>
+          <a href="#phaseNav">Recorrido de fases</a>
+        </nav>
+      </footer>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script>
+      function runMission(grade) {
+      const passage = grade === 4
+        ? 'El martes, los estudiantes de cuarto organizaron una pequeña huerta junto a la biblioteca. Sembraron semillas de fríjol y nombraron encargada del riego a Sara. La profesora explicó que observarían las plantas durante varias semanas y escribirían una noticia sobre su crecimiento. Al terminar la jornada, el grupo anotó la fecha y midió la tierra para comparar los cambios.'
+        : 'En la semana cultural, el grupo de quinto preparó una obra corta para compartirla con las familias. Primero resumieron una leyenda local y organizaron sus ideas en un escrito. Después repartieron los personajes y ensayaron gestos para representar algunas escenas sin palabras. Al final, cada equipo presentó su trabajo y explicó cómo colaboró para que el público comprendiera la historia.';
+      const phases = grade === 4 ? [
+        {
+          title: 'Escuchar y comprender una noticia',
+          label: 'FASE 1 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'Escucha la noticia narrada y luego identifica su idea principal. Apoya tu respuesta con un dato que hayas escuchado.',
+          tip: 'Una noticia informa sobre un hecho. Escucha quiénes participaron y qué hicieron.',
+          hint: 'Presta atención a lo que organizaron los estudiantes y a lo que harán con las plantas.',
+          maxPoints: 20
+        },
+        {
+          title: 'Acentuación, mayúsculas y puntuación',
+          label: 'FASE 2 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'Revisa la oración, corrige las mayúsculas y los signos, y clasifica las palabras por su acento.',
+          tip: 'Lee en voz alta y busca la sílaba que suena más fuerte. Recuerda la mayúscula al comenzar.',
+          hint: 'Fíjate en la tilde de “miércoles”, el inicio de la oración y su punto final.',
+          maxPoints: 20
+        },
+        {
+          title: 'Participar en un debate',
+          label: 'FASE 3 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'La clase debate si la huerta debe tener un espacio fijo en el patio. Escribe tu opinión, una razón y un dato de la noticia que apoye tu postura.',
+          tip: 'En un debate se escuchan distintas opiniones y se apoyan con razones respetuosas.',
+          hint: 'Piensa qué aprendería el grupo al observar las plantas durante varias semanas.',
+          maxPoints: 20
+        },
+        {
+          title: 'Planear, escribir y revisar',
+          label: 'FASE 4 DE 5',
+          points: 'Hasta 30 puntos',
+          prompt: 'Escribe un texto informativo breve sobre la huerta. Organiza las ideas, redacta una primera versión y revísala antes de entregar la versión final.',
+          tip: 'Un texto informativo presenta el tema con claridad y orden.',
+          hint: 'Incluye qué ocurrió, quiénes participaron y qué harán después. Revisa tildes, mayúsculas y puntos.',
+          maxPoints: 30
+        },
+        {
+          title: 'Reflexionar sobre lo aprendido',
+          label: 'FASE 5 DE 5',
+          points: 'Hasta 10 puntos',
+          prompt: 'Cuenta qué aprendiste sobre las noticias y qué cambiaste al revisar tu escrito.',
+          tip: 'Menciona un cambio concreto que haya mejorado tu texto.',
+          hint: 'Compara tus dos versiones y piensa en la puntuación, las mayúsculas y el orden de las ideas.',
+          maxPoints: 10
+        }
+      ] : [
+        {
+          title: 'Leer y resumir',
+          label: 'FASE 1 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'Lee el texto sobre la semana cultural. Elige la idea principal y escribe un resumen breve con la información más importante.',
+          tip: 'Un resumen conserva las ideas principales y evita detalles repetidos.',
+          hint: 'Recuerda qué preparó el grupo, cómo se organizó y qué presentó.',
+          maxPoints: 20
+        },
+        {
+          title: 'Organizar un trabajo escrito',
+          label: 'FASE 2 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'Planea un trabajo escrito sobre la obra de la semana cultural. Completa el título, la introducción, el desarrollo, la conclusión y las fuentes consultadas.',
+          tip: 'Cada parte cumple una función: presenta el tema, lo desarrolla o lo cierra.',
+          hint: 'En el desarrollo puedes contar cómo resumieron la leyenda y prepararon la obra.',
+          maxPoints: 20
+        },
+        {
+          title: 'Expresarse con mímica',
+          label: 'FASE 3 DE 5',
+          points: 'Hasta 20 puntos',
+          prompt: 'Elige una situación de la obra y explica cómo la representarías sin hablar. Describe los gestos y movimientos que ayudarían al público a adivinarla.',
+          tip: 'En la mímica, el cuerpo y los gestos transmiten el mensaje.',
+          hint: 'Piensa qué movimiento mostraría que alguien siembra, ensaya o presenta una obra.',
+          maxPoints: 20
+        },
+        {
+          title: 'Crear una escena y presentarla',
+          label: 'FASE 4 DE 5',
+          points: 'Hasta 30 puntos',
+          prompt: 'Escribe una escena teatral breve para presentar la semana cultural. Incluye personajes, diálogo y una acotación que indique un gesto o movimiento.',
+          tip: 'Un guion teatral usa nombres de personajes y acotaciones para orientar la representación.',
+          hint: 'Imagina qué dicen los estudiantes antes de salir a escena y qué hace cada personaje.',
+          maxPoints: 30
+        },
+        {
+          title: 'Integrar y evaluar lo aprendido',
+          label: 'FASE 5 DE 5',
+          points: 'Hasta 10 puntos',
+          prompt: 'Reflexiona sobre cómo colaboraste en el resumen, el trabajo escrito y la presentación teatral.',
+          tip: 'Piensa en una habilidad que aportaste y otra que quieres seguir practicando.',
+          hint: 'Recuerda cómo se combinaron la escritura, la mímica y el teatro en la semana cultural.',
+          maxPoints: 10
+        }
+      ];
+
+      const pointsKey = `${window.lectoMenteStoragePrefix}-puntos`;
+      const progressKey = `${window.lectoMenteStoragePrefix}-mision`;
+      const completedChallengesKey = `${window.lectoMenteStoragePrefix}-retos-completados`;
+      const phaseIndex = Math.min(Math.max(Number(new URLSearchParams(window.location.search).get('reto')) || 1, 1), phases.length) - 1;
+      const phase = phases[phaseIndex];
+      const activity = document.getElementById('retoActivity');
+      const feedback = document.getElementById('retoFeedback');
+      const scoreDisplay = document.getElementById('retoScore');
+      const hintButton = document.getElementById('hintButton');
+      const hintText = document.getElementById('hintText');
+      let cloudSaveTimer;
+      let progress;
+      let points = Number(localStorage.getItem(pointsKey)) || 0;
+
+      try {
+        progress = JSON.parse(localStorage.getItem(progressKey) || 'null') || {
+          lives: 3,
+          completed: {},
+          awarded: {},
+          hints: {},
+          evidence: {}
+        };
+      } catch (error) {
+        console.error('No se pudo cargar el progreso de la misión.', error);
+        progress = { lives: 3, completed: {}, awarded: {}, hints: {}, evidence: {} };
+      }
+
+      function saveProgress() {
+        localStorage.setItem(progressKey, JSON.stringify(progress));
+        localStorage.setItem(pointsKey, points);
+        window.clearTimeout(cloudSaveTimer);
+        cloudSaveTimer = window.setTimeout(() => {
+          syncProgressToCloud().catch(showCloudSaveError);
+        }, 700);
+      }
+
+      function syncProgressToCloud() {
+        let completedChallenges;
+        try {
+          const savedChallenges = JSON.parse(localStorage.getItem(completedChallengesKey) || '[]');
+          completedChallenges = Array.isArray(savedChallenges) ? savedChallenges : [];
+        } catch (error) {
+          console.error('No se pudo leer el progreso local de los retos.', error);
+          return Promise.reject(new Error('No se pudo leer el progreso local de los retos.'));
+        }
+        return window.LectoMente.saveProgress({
+          grade,
+          points,
+          completedChallenges,
+          mission: progress
+        });
+      }
+
+      function showCloudSaveError(error) {
+        console.error('No se pudo guardar el progreso en Supabase.', error);
+        setFeedback('El progreso quedó guardado en este dispositivo, pero no se pudo sincronizar con la cuenta. Comprueba tu conexión e inténtalo de nuevo.', 'error');
+      }
+
+      function markChallengeComplete(challengeNumber) {
+        let completedChallenges = [];
+        try {
+          const savedChallenges = JSON.parse(localStorage.getItem(completedChallengesKey) || '[]');
+          if (Array.isArray(savedChallenges)) completedChallenges = savedChallenges;
+        } catch (error) {
+          console.error('No se pudo cargar el progreso de los retos semanales.', error);
+        }
+
+        if (!completedChallenges.includes(challengeNumber)) {
+          completedChallenges.push(challengeNumber);
+          localStorage.setItem(completedChallengesKey, JSON.stringify(completedChallenges));
+        }
+      }
+
+      function updateScore() {
+        scoreDisplay.textContent = points;
+        document.getElementById('retoLives').textContent = `${'♥ '.repeat(progress.lives)}${'♡ '.repeat(3 - progress.lives)}`.trim();
+        document.getElementById('retoProgress').style.width = `${(Object.keys(progress.completed).length / phases.length) * 100}%`;
+        document.getElementById('retoProgressTrack').setAttribute('aria-valuenow', Object.keys(progress.completed).length);
+      }
+
+      function setFeedback(message, kind) {
+        feedback.textContent = message;
+        feedback.className = `feedback${kind ? ` ${kind}` : ''}`;
+      }
+
+      function awardPhase(pointsEarned) {
+        const previousAward = Number(progress.awarded[phaseIndex]) || 0;
+        if (pointsEarned > previousAward) {
+          points += pointsEarned - previousAward;
+          progress.awarded[phaseIndex] = pointsEarned;
+          localStorage.setItem(pointsKey, points);
+        }
+        progress.completed[phaseIndex] = true;
+        saveProgress();
+        if (phases.every((_, index) => progress.completed[index])) markChallengeComplete(1);
+        saveProgress();
+        window.clearTimeout(cloudSaveTimer);
+        cloudSaveTimer = undefined;
+        syncProgressToCloud().catch(showCloudSaveError);
+        updateScore();
+        const message = pointsEarned > previousAward
+          ? `¡Fase completada! Ganaste ${pointsEarned - previousAward} puntos. Tu proceso también cuenta.`
+          : 'Tu fase sigue completada. Tu trabajo y tu progreso están guardados.';
+        setFeedback(message, 'success');
+      }
+
+      function recordMistake(message) {
+        progress.lives = Math.max(0, progress.lives - 1);
+        saveProgress();
+        updateScore();
+        const support = progress.lives > 0
+          ? ' Prueba otra vez o pide una pista.'
+          : ' Ya usaste tus tres oportunidades; puedes seguir aprendiendo con las pistas.';
+        setFeedback(`${message}${support}`, 'error');
+      }
+
+      function countWords(text) {
+        return text.trim().split(/\s+/).filter(Boolean).length;
+      }
+
+      function createField(labelText, id, placeholder, rows = 4) {
+        const label = document.createElement('label');
+        label.className = 'activity-label';
+        label.htmlFor = id;
+        label.textContent = labelText;
+        const textarea = document.createElement('textarea');
+        textarea.id = id;
+        textarea.rows = rows;
+        textarea.maxLength = 3000;
+        textarea.placeholder = placeholder;
+        textarea.value = progress.evidence[id] || '';
+        textarea.addEventListener('input', () => {
+          progress.evidence[id] = textarea.value;
+          saveProgress();
+        });
+        activity.append(label, textarea);
+        return textarea;
+      }
+
+      function addSubmitButton(label, handler) {
+        const button = document.createElement('button');
+        button.className = 'primary-btn';
+        button.type = 'button';
+        button.textContent = label;
+        button.addEventListener('click', handler);
+        activity.appendChild(button);
+      }
+
+      function renderPhaseOne() {
+        const reading = document.createElement('article');
+        reading.className = 'reading-passage';
+        reading.innerHTML = grade === 4
+          ? '<h2>Noticia escolar: una huerta junto a la biblioteca</h2>'
+          : '<h2>La semana cultural de quinto</h2>';
+        const passageText = document.createElement('p');
+        passageText.textContent = passage;
+        reading.appendChild(passageText);
+        if (grade === 4) {
+          const listenButton = document.createElement('button');
+          listenButton.className = 'secondary-btn';
+          listenButton.type = 'button';
+          listenButton.textContent = '▶ Escuchar la noticia';
+          const audioHelp = document.createElement('p');
+          audioHelp.className = 'field-help';
+          audioHelp.textContent = 'Audio narrado original generado con la voz disponible en tu navegador.';
+          const uploadLabel = document.createElement('label');
+          uploadLabel.className = 'activity-label';
+          uploadLabel.htmlFor = 'authorizedAudio';
+          uploadLabel.textContent = 'También puedes escuchar un audio autorizado de tu docente';
+          const audioUpload = document.createElement('input');
+          audioUpload.id = 'authorizedAudio';
+          audioUpload.type = 'file';
+          audioUpload.accept = 'audio/*';
+          const audioPlayer = document.createElement('audio');
+          audioPlayer.className = 'audio-player';
+          audioPlayer.controls = true;
+          audioPlayer.hidden = true;
+          let audioUrl = '';
+          audioUpload.addEventListener('change', () => {
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
+            const file = audioUpload.files && audioUpload.files[0];
+            if (file) {
+              audioUrl = URL.createObjectURL(file);
+              audioPlayer.src = audioUrl;
+              audioPlayer.hidden = false;
+            } else {
+              audioPlayer.removeAttribute('src');
+              audioPlayer.hidden = true;
+            }
+          });
+          listenButton.addEventListener('click', () => {
+            if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+              setFeedback('Tu navegador no tiene lectura de voz disponible. Puedes leer el texto y continuar la actividad.', 'error');
+              return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(passage);
+            utterance.lang = 'es-CO';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+          });
+          activity.append(listenButton, audioHelp, uploadLabel, audioUpload, audioPlayer);
+        }
+        activity.appendChild(reading);
+        const options = grade === 4 ? [
+          'Los estudiantes sembraron fríjoles y observarán su crecimiento para escribir una noticia.',
+          'La profesora llevó a los estudiantes a conocer varias ciudades.',
+          'Sara construyó una biblioteca nueva para la escuela.'
+        ] : [
+          'El grupo resumió una leyenda, preparó una obra y presentó su trabajo en la semana cultural.',
+          'Las familias organizaron una huerta junto a la biblioteca.',
+          'El grupo decidió cancelar todos los ensayos de teatro.'
+        ];
+        const question = document.createElement('p');
+        question.className = 'activity-question';
+        question.textContent = grade === 4
+          ? '¿Cuál es la idea principal de la noticia? Elige una respuesta y menciona un dato que escuchaste.'
+          : '¿Cuál es la idea principal del texto? Elige una respuesta y escribe un resumen de una o dos oraciones.';
+        const optionList = document.createElement('div');
+        optionList.className = 'reto-options';
+        let selected = '';
+        options.forEach((option) => {
+          const label = document.createElement('label');
+          label.className = 'choice-option';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'mainIdea';
+          radio.value = option;
+          radio.checked = progress.evidence.mainIdea === option;
+          radio.addEventListener('change', () => {
+            selected = radio.value;
+            progress.evidence.mainIdea = selected;
+            saveProgress();
+          });
+          if (radio.checked) selected = option;
+          label.append(radio, document.createTextNode(option));
+          optionList.appendChild(label);
+        });
+        activity.append(question, optionList);
+        const justification = createField(
+          grade === 4 ? '¿Qué dato escuchaste que respalda tu respuesta?' : 'Resume la información principal con tus propias palabras.',
+          'phase1Justification',
+          grade === 4 ? 'Por ejemplo: escuché que los estudiantes...' : 'El grupo... Después...'
+        );
+        addSubmitButton('Comprobar mi comprensión', () => {
+          if (!selected) {
+            recordMistake('Primero elige la idea principal del texto.');
+            return;
+          }
+          if (selected !== options[0]) {
+            recordMistake('Relee el texto y busca la actividad que conecta sus ideas.');
+            return;
+          }
+          const hasEvidence = justification.value.trim().length >= 20;
+          if (hasEvidence) {
+            awardPhase(20);
+          } else {
+            awardPhase(12);
+            setFeedback('¡La idea principal es correcta! Ganaste 12 puntos. Añade un dato o un resumen más completo para obtener el puntaje máximo.', 'success');
+          }
+        });
+      }
+
+      function renderPhaseTwo() {
+        if (grade === 4) {
+          const corrected = createField(
+            'Corrige esta oración: el miercoles la profesora explico como escribir una noticia',
+            'phase2Correction',
+            'Escribe la oración con mayúsculas, tildes y puntuación correctas.'
+          );
+          const classified = createField(
+            'Clasifica estas palabras como agudas, graves o esdrújulas: noticia, información, árbol, teléfono.',
+            'phase2Accent',
+            'Escribe cada palabra y su clasificación.'
+          );
+          const sentenceTypes = createField(
+            'Identifica cada oración: “El grupo sembró fríjoles.” / “El grupo sembró fríjoles y Sara regó la tierra.”',
+            'phase2SentenceTypes',
+            'La primera es..., la segunda es...'
+          );
+          addSubmitButton('Revisar mis correcciones', () => {
+            if (corrected.value.trim().length < 25 || classified.value.trim().length < 20 || sentenceTypes.value.trim().length < 15) {
+              recordMistake('Completa la corrección, la clasificación por acento y el tipo de las dos oraciones.');
+              return;
+            }
+            const punctuation = /[.!?]$/.test(corrected.value.trim());
+            const accentCategories = ['aguda', 'grave', 'esdr[uú]jula'].filter((category) =>
+              new RegExp(category, 'i').test(classified.value)).length;
+            const identifiesSentenceTypes = /simple/i.test(sentenceTypes.value) && /compuesta/i.test(sentenceTypes.value);
+            awardPhase(punctuation && accentCategories === 3 && identifiesSentenceTypes ? 20 : 14);
+            if (!punctuation || accentCategories < 3 || !identifiesSentenceTypes) {
+              setFeedback('Tus respuestas quedaron guardadas. Revisa las mayúsculas, los signos, las clases de acento y cuál oración tiene una sola idea o dos unidas.', 'success');
+            }
+          });
+          return;
+        }
+        const title = createField('Título del trabajo escrito', 'phase2Title', 'La semana cultural de quinto');
+        const introduction = createField('Introducción: presenta el tema', 'phase2Introduction', 'En este trabajo explicaré...');
+        const development = createField('Desarrollo: organiza los datos principales', 'phase2Development', 'Primero..., después...');
+        const conclusion = createField('Conclusión: cierra el tema', 'phase2Conclusion', 'En conclusión...');
+        const sources = createField('Fuentes consultadas', 'phase2Sources', 'Texto de clase, libro o fuente consultada...');
+        addSubmitButton('Guardar mi plan de trabajo', () => {
+          const parts = [title, introduction, development, conclusion, sources];
+          if (parts.some((field) => field.value.trim().length < 8)) {
+            recordMistake('Completa las cinco partes del trabajo escrito con información propia.');
+            return;
+          }
+          awardPhase(20);
+        });
+        return;
+      }
+
+      function renderPhaseThree() {
+        if (grade === 4) {
+          const opinion = createField('Mi opinión sobre la huerta', 'phase3Opinion', 'Creo que la huerta debería...');
+          const reason = createField('Una razón que apoya mi opinión', 'phase3Reason', 'Pienso esto porque...');
+          const evidence = createField('Un dato de la noticia que puedo usar como evidencia', 'phase3Evidence', 'En la noticia se cuenta que...');
+          addSubmitButton('Compartir mi argumento', () => {
+            if ([opinion, reason, evidence].some((field) => field.value.trim().length < 12)) {
+              recordMistake('Escribe una opinión, una razón y un dato como evidencia.');
+              return;
+            }
+            awardPhase(20);
+            setFeedback('¡Buen argumento! Expresaste tu opinión con una razón y un dato de apoyo. Recuerda escuchar con respeto las otras ideas.', 'success');
+          });
+          return;
+        }
+        const choices = [
+          'Sembrar una semilla y regarla.',
+          'Ensayar una escena teatral.',
+          'Presentar una historia frente al público.'
+        ];
+        const prompt = document.createElement('p');
+        prompt.className = 'activity-question';
+        prompt.textContent = 'Elige una situación y describe los gestos y movimientos con que la representarías sin hablar.';
+        const list = document.createElement('div');
+        list.className = 'reto-options';
+        let selected = progress.evidence.phase3Mime || '';
+        choices.forEach((choice) => {
+          const label = document.createElement('label');
+          label.className = 'choice-option';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'phase3Mime';
+          radio.value = choice;
+          radio.checked = selected === choice;
+          radio.addEventListener('change', () => {
+            selected = choice;
+            progress.evidence.phase3Mime = choice;
+            saveProgress();
+          });
+          label.append(radio, document.createTextNode(choice));
+          list.appendChild(label);
+        });
+        activity.append(prompt, list);
+        const gestures = createField('¿Qué harías con tu cuerpo y tu rostro?', 'phase3Gestures', 'Primero..., luego..., finalmente...', 5);
+        addSubmitButton('Guardar mi idea de mímica', () => {
+          if (!selected || gestures.value.trim().length < 30) {
+            recordMistake('Elige una situación y explica al menos dos gestos o movimientos.');
+            return;
+          }
+          awardPhase(/gesto|mano|brazo|cara|cuerpo|mover|simul/i.test(gestures.value) ? 20 : 15);
+        });
+        return;
+      }
+
+      function renderPhaseFour() {
+        if (grade === 5) {
+          const scene = createField(
+            'Escribe una escena corta con dos personajes y un diálogo.',
+            'phase4Scene',
+            'PERSONAJE 1: ...\\nPERSONAJE 2: ...',
+            7
+          );
+          const directions = createField(
+            'Añade una acotación entre paréntesis con un gesto, movimiento o tono de voz.',
+            'phase4Directions',
+            '(Sonríe y saluda al público...)'
+          );
+          const presentation = createField(
+            'Prepara una breve exposición oral para presentar la obra al grupo.',
+            'phase4Presentation',
+            'Nuestra obra trata de... Mi personaje... Para prepararla...',
+            5
+          );
+          const speakButton = document.createElement('button');
+          speakButton.className = 'secondary-btn';
+          speakButton.type = 'button';
+          speakButton.textContent = '▶ Escuchar mi ensayo';
+          speakButton.addEventListener('click', () => {
+            if (!scene.value.trim() || !presentation.value.trim()
+              || !('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+              setFeedback('Escribe tu escena y tu exposición primero. Si la voz no está disponible, puedes ensayarlas en voz alta.', 'error');
+              return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(`${presentation.value}. ${scene.value}`);
+            utterance.lang = 'es-CO';
+            window.speechSynthesis.speak(utterance);
+          });
+          activity.appendChild(speakButton);
+          addSubmitButton('Guardar mi escena teatral', () => {
+            if (countWords(scene.value) < 25 || directions.value.trim().length < 10 || countWords(presentation.value) < 20) {
+              recordMistake('Escribe el diálogo, agrega una acotación escénica y prepara una exposición de al menos 20 palabras.');
+              return;
+            }
+            awardPhase(30);
+            setFeedback('¡Presentación guardada! Puedes ensayar la exposición y la escena en voz alta, y practicar la expresión corporal.', 'success');
+          });
+          return;
+        }
+        const first = createField('Versión 1 · Escribe un texto informativo (80 a 120 palabras).', 'firstDraft', 'Explica qué hicieron los estudiantes y qué observarán.', 9);
+        const textTypeLabel = document.createElement('label');
+        textTypeLabel.className = 'activity-label';
+        textTypeLabel.htmlFor = 'phase4TextType';
+        textTypeLabel.textContent = 'Elige el tipo de texto que vas a crear';
+        const textType = document.createElement('select');
+        textType.id = 'phase4TextType';
+        textType.required = true;
+        [
+          ['', 'Selecciona un tipo de texto'],
+          ['noticia', 'Noticia'],
+          ['biografia', 'Biografía'],
+          ['relato-historico', 'Relato histórico'],
+          ['ensayo', 'Ensayo breve'],
+          ['resumen', 'Resumen']
+        ].forEach(([value, labelText]) => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = labelText;
+          textType.appendChild(option);
+        });
+        textType.value = progress.evidence.phase4TextType || '';
+        textType.addEventListener('change', () => {
+          progress.evidence.phase4TextType = textType.value;
+          saveProgress();
+        });
+        const firstDraftLabel = first.previousElementSibling;
+        activity.insertBefore(textTypeLabel, firstDraftLabel);
+        activity.insertBefore(textType, firstDraftLabel);
+        const counter1 = document.createElement('p');
+        counter1.className = 'word-counter';
+        const revision = createField('Versión 2 · Reescribe tu texto con las correcciones.', 'revisedDraft', 'Presenta aquí tu versión corregida y mejorada.', 9);
+        const counter2 = document.createElement('p');
+        counter2.className = 'word-counter';
+        function updateCounters() {
+          counter1.textContent = `${countWords(first.value)} / 80–120 palabras`;
+          counter2.textContent = `${countWords(revision.value)} / 80–120 palabras`;
+        }
+        first.addEventListener('input', updateCounters);
+        revision.addEventListener('input', updateCounters);
+        activity.insertBefore(counter1, revision.previousElementSibling);
+        activity.appendChild(counter2);
+        updateCounters();
+        const checklist = document.createElement('fieldset');
+        checklist.className = 'revision-checklist';
+        const legend = document.createElement('legend');
+        legend.textContent = 'Antes de entregar la versión 2, revisa:';
+        checklist.appendChild(legend);
+        const checks = [
+          ['checkSequence', 'Organicé las ideas en un orden claro.'],
+          ['checkSpelling', 'Revisé mayúsculas, tildes y ortografía.'],
+          ['checkPunctuation', 'Revisé la puntuación y los finales de oración.'],
+          ['checkCoherence', 'Conecté mis ideas y cambié palabras repetidas.']
+        ];
+        const checkboxes = checks.map(([id, text]) => {
+          const label = document.createElement('label');
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = Boolean(progress.evidence[id]);
+          checkbox.addEventListener('change', () => {
+            progress.evidence[id] = checkbox.checked;
+            saveProgress();
+          });
+          label.append(checkbox, document.createTextNode(text));
+          checklist.appendChild(label);
+          return checkbox;
+        });
+        activity.appendChild(checklist);
+        addSubmitButton('Guardar las dos versiones', () => {
+          const firstCount = countWords(first.value);
+          const revisionCount = countWords(revision.value);
+          if (!textType.value) {
+            recordMistake('Elige si vas a escribir una noticia, biografía, relato histórico, ensayo o resumen.');
+            return;
+          }
+          if (firstCount < 80 || firstCount > 120 || revisionCount < 80 || revisionCount > 120) {
+            recordMistake('Cada versión debe tener entre 80 y 120 palabras. Usa los contadores para revisar la extensión.');
+            return;
+          }
+          if (first.value.trim() === revision.value.trim()) {
+            recordMistake('La segunda versión debe mostrar al menos una mejora respecto de la primera.');
+            return;
+          }
+          const checksDone = checkboxes.filter((checkbox) => checkbox.checked).length;
+          const text = `${first.value} ${revision.value}`;
+          const hasSentences = /[.!?]/.test(text);
+          awardPhase(checksDone === checks.length && hasSentences ? 30 : 22 + Math.min(checksDone, 3) * 2);
+          if (checksDone < checks.length) {
+            setFeedback('Guardaste las dos versiones. Ganaste puntos por crear y mejorar; completa la lista de revisión para valorar también todo el proceso.', 'success');
+          }
+        });
+      }
+
+      function renderPhaseFive() {
+        const discoveries = createField(
+          grade === 4 ? '¿Qué aprendí sobre las noticias, los debates o la acentuación?' : '¿Qué aprendí al resumir y organizar un trabajo escrito?',
+          'reflectionDiscovery',
+          'Una idea nueva que me llevo...'
+        );
+        const difficulty = createField(
+          grade === 4 ? '¿Qué fue lo más difícil al escribir o corregir?' : '¿Qué fue lo más difícil al hacer mímica o preparar la escena?',
+          'reflectionDifficulty',
+          'Algo que me costó fue...'
+        );
+        const improvement = createField(
+          grade === 4 ? '¿Qué mejoré al revisar mi texto informativo?' : '¿Cómo ayudaron los gestos y el trabajo en equipo a la presentación?',
+          'reflectionImprovement',
+          'En mi trabajo mejoré...',
+          5
+        );
+        addSubmitButton('Terminar mi reflexión', () => {
+          if ([discoveries, difficulty, improvement].some((field) => field.value.trim().length < 8)) {
+            recordMistake('Completa las tres respuestas con una idea propia.');
+            return;
+          }
+          awardPhase(10);
+          setFeedback('¡Misión completada! Tus respuestas y tu progreso se guardan en tu cuenta.', 'success');
+          const badge = document.createElement('p');
+          badge.className = 'mission-badge';
+          badge.textContent = '🏅 Insignia: Explorador de historias';
+          if (!activity.querySelector('.mission-badge')) activity.appendChild(badge);
+        });
+      }
+
+      const missionName = grade === 4
+        ? 'La noticia de la huerta escolar'
+        : 'La semana cultural: resumen, mímica y teatro';
+      document.title = `${phase.title} | ${missionName}`;
+      document.getElementById('missionTitle').textContent = missionName;
+      document.getElementById('retoBrandTitle').textContent = missionName;
+      document.getElementById('missionSidebarTitle').textContent = grade === 4 ? 'La huerta escolar' : 'Semana cultural';
+      document.getElementById('missionFooter').textContent = missionName;
+      document.getElementById('missionSummaryText').textContent = grade === 4
+        ? 'Escucha una noticia, practica la escritura y comparte argumentos en un debate.'
+        : 'Resume un texto, organiza un trabajo y crea una presentación teatral.';
+      document.getElementById('retoCount').textContent = phase.label;
+      document.getElementById('retoPoints').textContent = phase.points;
+      document.getElementById('retoTitle').textContent = phase.title;
+      document.getElementById('retoPrompt').textContent = phase.prompt;
+      document.getElementById('retoTip').textContent = phase.tip;
+      document.getElementById('hintText').textContent = '';
+
+      phases.forEach((item, index) => {
+        const step = document.createElement('a');
+        step.className = `reto-step${index === phaseIndex ? ' active' : ''}${progress.completed[index] ? ' completed' : ''}`;
+        step.href = `reto.html?reto=${index + 1}`;
+        step.setAttribute('aria-current', index === phaseIndex ? 'step' : 'false');
+        step.innerHTML = `<span class="reto-step-number">${progress.completed[index] ? '✓' : index + 1}</span><span>${item.title}</span>`;
+        document.getElementById('phaseNav').appendChild(step);
+      });
+
+      hintButton.addEventListener('click', () => {
+        const hintCount = progress.hints[phaseIndex] || 0;
+        hintText.textContent = hintCount === 0
+          ? phase.hint
+          : `Pista ${hintCount + 1}: ${phase.hint} Tómate un momento para releer o revisar tu respuesta.`;
+        progress.hints[phaseIndex] = hintCount + 1;
+        saveProgress();
+      });
+
+      const renderers = [renderPhaseOne, renderPhaseTwo, renderPhaseThree, renderPhaseFour, renderPhaseFive];
+      renderers[phaseIndex]();
+      const previousLink = document.getElementById('previousReto');
+      const nextLink = document.getElementById('nextReto');
+      previousLink.href = phaseIndex === 0 ? 'index.html#retos' : `reto.html?reto=${phaseIndex}`;
+      nextLink.href = phaseIndex === phases.length - 1 ? 'index.html#retos' : `reto.html?reto=${phaseIndex + 2}`;
+      if (phaseIndex === 0) previousLink.textContent = 'Volver a la misión';
+      if (phaseIndex === phases.length - 1) nextLink.textContent = 'Finalizar';
+      [previousLink, nextLink, ...document.querySelectorAll('#phaseNav a')].forEach((link) => {
+        link.addEventListener('click', async (event) => {
+          event.preventDefault();
+          link.setAttribute('aria-disabled', 'true');
+          try {
+            window.clearTimeout(cloudSaveTimer);
+            await syncProgressToCloud();
+            window.location.assign(link.href);
+          } catch (error) {
+            showCloudSaveError(error);
+            link.removeAttribute('aria-disabled');
+          }
+        });
+      });
+      if (progress.completed[phaseIndex]) {
+        setFeedback('Ya completaste esta fase. Puedes volver a revisar tu trabajo o avanzar a la siguiente.', 'success');
+      }
+      updateScore();
+      }
+
+      window.LectoMente.session().then((user) => {
+        if (!user) {
+          window.location.replace('index.html?login=required');
+          return;
+        }
+        if (user.grade !== 4 && user.grade !== 5) {
+          window.location.replace('index.html?grade=required');
+          return;
+        }
+        window.lectoMenteStoragePrefix = `lectomente-usuario-${user.id}-grado-${user.grade}`;
+        const savedGradeData = user.gradeData && user.gradeData[String(user.grade)];
+        if (savedGradeData) {
+          localStorage.setItem(`${window.lectoMenteStoragePrefix}-puntos`, savedGradeData.points || 0);
+          localStorage.setItem(`${window.lectoMenteStoragePrefix}-retos-completados`, JSON.stringify(savedGradeData.completedChallenges || []));
+          if (savedGradeData.mission) {
+            localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision`, JSON.stringify(savedGradeData.mission));
+          }
+        }
+        document.querySelector('.challenge-audience').textContent = `Para estudiantes de ${user.grade === 4 ? 'cuarto' : 'quinto'} grado de primaria`;
+        document.querySelector('.mission-tag').textContent = `Misión de aprendizaje · ${user.grade === 4 ? 'Cuarto' : 'Quinto'} grado`;
+        runMission(user.grade);
+      }).catch((error) => {
+        console.error('No se pudo comprobar la sesión para abrir la misión.', error);
+        const message = document.getElementById('retoFeedback');
+        message.textContent = 'No se pudo verificar tu sesión. Vuelve al inicio e inténtalo de nuevo.';
+        message.className = 'feedback error';
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+# Datos y base de datos local
+data/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Dependencias y configuraciones privadas
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
