@@ -128,10 +128,16 @@
           throw new Error('El grado de la sesión cambió. Vuelve a elegir tu grado antes de guardar.');
         }
         const gradeData = currentProfile.grade_data || {};
+        const savedGradeData = gradeData[String(progress.grade)] || {};
+        const missions = { ...(savedGradeData.missions || {}) };
+        if (!missions['1'] && savedGradeData.mission) missions['1'] = savedGradeData.mission;
+        missions[String(progress.missionNumber)] = progress.mission;
         gradeData[String(progress.grade)] = {
+          ...savedGradeData,
           points: progress.points,
           completedChallenges: progress.completedChallenges,
-          mission: progress.mission
+          missions,
+          mission: progress.missionNumber === 1 ? progress.mission : savedGradeData.mission || missions['1']
         };
         currentProfile.grade_data = gradeData;
         await persistProfile();

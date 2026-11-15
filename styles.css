@@ -692,9 +692,122 @@ button {
   color: #166534;
 }
 
-.challenge-placeholder {
-  min-height: 48px;
-  margin-bottom: 0;
+.game-illustration {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  margin: 8px auto 18px;
+  place-items: center;
+  border: 1px solid rgba(79, 70, 229, 0.18);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #eef2ff, #fdf2f8);
+  font-size: 2.8rem;
+}
+
+.matching-game {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.matching-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.7fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(79, 70, 229, 0.16);
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.matching-row strong {
+  color: var(--primary-dark);
+}
+
+.word-search-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 5px;
+  width: min(100%, 520px);
+  margin: 18px auto;
+}
+
+.word-search-cell {
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.word-search-cell.selected {
+  background: #dbeafe;
+  border-color: #2563eb;
+}
+
+.word-search-cell.found {
+  background: #dcfce7;
+  border-color: #16a34a;
+}
+
+.word-search-cell:focus-visible,
+.game-board-space:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.4);
+  outline-offset: 2px;
+}
+
+.word-search-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.word-search-list .word-found {
+  color: #15803d;
+  font-weight: 800;
+}
+
+.game-board,
+.escape-locks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.game-board-space,
+.escape-lock {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 2px solid #c7d2fe;
+  border-radius: 14px;
+  background: #eef2ff;
+  color: var(--primary-dark);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.game-board-space.current,
+.escape-lock.current {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.game-board-space.visited,
+.escape-lock.opened {
+  border-color: #86efac;
+  background: #dcfce7;
 }
 
 .mission-start-card {
@@ -1148,6 +1261,21 @@ button {
   flex: 0 0 auto;
   margin-top: 4px;
   accent-color: var(--primary);
+}
+
+@media (max-width: 560px) {
+  .matching-row {
+    grid-template-columns: 1fr;
+  }
+
+  .word-search-grid {
+    gap: 3px;
+  }
+
+  .word-search-cell {
+    border-radius: 5px;
+    font-size: 0.85rem;
+  }
 }
 
 .reto-activity > .primary-btn {

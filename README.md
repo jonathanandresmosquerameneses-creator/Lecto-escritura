@@ -26,3 +26,5 @@ npm start
 Abre `http://localhost:3000`. También puedes servir la carpeta con otro servidor HTTP local. No abras los archivos HTML directamente.
 
 El grado y el progreso se guardan en Supabase, aislados por cuenta y por grado. El audio de cuarto usa una narración original del navegador y también admite un archivo autorizado del docente desde el dispositivo.
+
+Los cinco retos se desbloquean en orden y cada uno conserva su propio avance. El progreso anterior de la primera misión se reconoce como el reto 1; los nuevos retos se agregan sin borrar esos datos ni requieren cambios en `supabase-schema.sql`.

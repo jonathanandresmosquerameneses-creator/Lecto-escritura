@@ -120,11 +120,295 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script>
-      function runMission(grade) {
+      function getWeeklyMission(grade, missionNumber) {
+        const quiz = (title, question, options, answer, field) => ({
+          kind: 'quiz',
+          title,
+          question,
+          options,
+          answer,
+          field
+        });
+        const write = (title, prompt, fieldLabel, placeholder, minWords) => ({
+          kind: 'writing',
+          title,
+          question: prompt,
+          field: { label: fieldLabel, placeholder, minWords }
+        });
+        const match = (title, question, pairs) => ({ kind: 'match', title, question, pairs });
+        const board = (title, question, options, answer, field) => ({
+          kind: 'board',
+          title,
+          question,
+          options,
+          answer,
+          field
+        });
+        const escape = (title, question, options, answer, field) => ({
+          kind: 'escape',
+          title,
+          question,
+          options,
+          answer,
+          field
+        });
+        const catalogs = {
+          4: {
+            2: {
+              title: 'El juego de las pistas: unir para resumir',
+              subtitle: 'Conecta ideas, detalles y secuencias para construir buenos resúmenes.',
+              icon: '🧩',
+              phases: [
+                match('Une las piezas del resumen', 'Selecciona la idea y únela con su significado.', [
+                  ['Idea principal', 'Cuenta de qué trata principalmente el texto.'],
+                  ['Detalle', 'Aporta información que explica la idea principal.'],
+                  ['Secuencia', 'Organiza los hechos en el orden en que suceden.'],
+                  ['Resumen', 'Expresa lo más importante con pocas palabras.']
+                ]),
+                quiz('Busca la idea principal', 'En una noticia sobre una clase que sembró fríjoles, ¿cuál dato expresa mejor la idea principal?', [
+                  'La clase creó una huerta y observará cómo crecen las plantas.',
+                  'Una estudiante llevó zapatos azules.',
+                  'La biblioteca tiene varias ventanas.'
+                ], 0),
+                quiz('Ordena el camino', '¿Qué conviene hacer primero para escribir un resumen?', [
+                  'Leer el texto y reconocer de qué trata.',
+                  'Copiar todas las oraciones sin leerlas.',
+                  'Agregar una historia que no aparece en el texto.'
+                ], 0),
+                write('Arma tu resumen', 'Escribe un resumen breve de una actividad escolar que conozcas. Incluye la idea principal y dos detalles importantes.', 'Mi resumen (al menos 20 palabras)', 'La actividad trata de... Primero... Después...', 20),
+                quiz('Reto final: resumen relámpago', '¿Cuál opción sería el mejor resumen de una noticia sobre una huerta escolar?', [
+                  'Los estudiantes sembraron semillas y observarán su crecimiento para aprender sobre las plantas.',
+                  'La noticia tenía cinco párrafos y muchas palabras.',
+                  'Me gustan las plantas y quiero una en mi casa.'
+                ], 0)
+              ]
+            },
+            3: {
+              title: 'El taller de escritores',
+              subtitle: 'Planea, organiza, escribe y revisa un texto propio.',
+              icon: '✍️',
+              phases: [
+                quiz('Prepara tu plan', 'Antes de escribir, ¿qué ayuda a organizar las ideas?', [
+                  'Elegir el tema y anotar las ideas principales.',
+                  'Escribir al azar y entregar sin leer.',
+                  'Borrar todas las ideas antes de empezar.'
+                ], 0),
+                match('Cada parte en su lugar', 'Une cada parte del texto con lo que debe hacer.', [
+                  ['Inicio', 'Presenta el tema.'],
+                  ['Desarrollo', 'Explica las ideas con detalles.'],
+                  ['Cierre', 'Termina y recuerda lo más importante.']
+                ]),
+                quiz('Revisión de detective', '¿Qué versión está mejor revisada?', [
+                  'El viernes, la clase visitó la biblioteca.',
+                  'el viernes la clase visito la biblioteca',
+                  'El viernes la clase visitó la biblioteca'
+                ], 0),
+                write('Escribe y mejora', 'Escribe un pequeño texto sobre una actividad de tu escuela. Luego revísalo y corrige al menos una cosa.', 'Mi texto revisado (al menos 25 palabras)', 'En mi escuela...', 25),
+                quiz('Lista de revisión', 'Al terminar un texto, ¿qué debes comprobar?', [
+                  'Que las ideas estén ordenadas y tenga mayúsculas y signos.',
+                  'Que todas las oraciones empiecen igual.',
+                  'Que no tenga título ni punto final.'
+                ], 0)
+              ]
+            },
+            4: {
+              title: 'Mímica y debate: ¡a expresarse!',
+              subtitle: 'Descifra gestos y expresa tus ideas con respeto.',
+              icon: '🎭',
+              phases: [
+                quiz('Descifra el gesto', 'Un compañero mueve los brazos como si regara una planta. ¿Qué situación representa?', [
+                  'Está cuidando una huerta.',
+                  'Está leyendo un libro.',
+                  'Está escribiendo una carta.'
+                ], 0),
+                write('Crea una escena muda', 'Elige una actividad escolar y explica tres gestos que ayudarían a adivinarla sin hablar.', 'Mis gestos (al menos 20 palabras)', 'Primero..., luego..., al final...', 20),
+                quiz('Lee el cuerpo', '¿Qué ayuda a que el público comprenda una mímica?', [
+                  'Usar gestos claros y movimientos relacionados con la acción.',
+                  'Quedarse quieto y mirar al suelo.',
+                  'Cambiar de tema sin terminar la escena.'
+                ], 0),
+                write('Prepara tu argumento', 'Escribe una opinión sobre una actividad que te gustaría hacer en clase y una razón que la apoye.', 'Mi opinión y mi razón (al menos 20 palabras)', 'Me gustaría... porque...', 20),
+                quiz('Cierre respetuoso', 'En un debate, ¿qué haces cuando alguien piensa distinto?', [
+                  'Escucho y respondo con respeto, usando una razón.',
+                  'Interrumpo hasta que deje de hablar.',
+                  'Me burlo de su idea.'
+                ], 0)
+              ]
+            },
+            5: {
+              title: 'La ruta escénica: exposición y teatro',
+              subtitle: 'Avanza por el tablero y ayuda a tu equipo a presentar una obra.',
+              icon: '🎲',
+              phases: [
+                board('Casilla 1: organiza la historia', '¿Qué debe tener un guion para que el público siga la historia?', [
+                  'Personajes y acciones en un orden comprensible.',
+                  'Solo una lista de palabras sin relación.',
+                  'El final antes de conocer a los personajes.'
+                ], 0),
+                board('Casilla 2: prepara el diálogo', '¿Cómo se sabe quién dice cada parlamento?', [
+                  'Se escribe el nombre del personaje antes de su diálogo.',
+                  'Se escribe todo seguido sin indicar quién habla.',
+                  'Se reemplazan los diálogos por números.'
+                ], 0),
+                board('Casilla 3: marca la acción', '¿Qué acotación orienta mejor a un actor?', [
+                  '(Saluda al público y señala el cartel.)',
+                  'La escuela es grande.',
+                  'Una palabra sin indicar ninguna acción.'
+                ], 0),
+                board('Casilla 4: ensaya la exposición', 'Al presentar el trabajo, ¿qué ayuda a que todos comprendan?', [
+                  'Hablar con claridad, mirar al público y explicar las ideas en orden.',
+                  'Hablar de espaldas y leer muy rápido.',
+                  'Omitir el tema de la presentación.'
+                ], 0, { label: 'Escribe una frase para presentar tu obra', placeholder: 'Nuestra obra trata de...', minWords: 8 }),
+                board('Casilla final: ¡se abre el telón!', '¿Qué combina una buena representación teatral?', [
+                  'Diálogo, expresión oral, gestos y colaboración.',
+                  'Solo movimientos sin relación con la historia.',
+                  'Una exposición sin tema ni preparación.'
+                ], 0, { label: 'Escribe cómo presentarías tu escena', placeholder: 'Presentaría la escena diciendo...', minWords: 10 })
+              ]
+            }
+          },
+          5: {
+            2: {
+              title: 'Sopa de letras de los textos',
+              subtitle: 'Encuentra palabras clave y descubre cómo se organizan los textos.',
+              icon: '🔎',
+              phases: [
+                { kind: 'wordsearch', title: 'Busca las palabras escondidas', question: 'Pulsa letras consecutivas de izquierda a derecha para encontrar cada palabra.', words: ['NOTICIA', 'BIOGRAFIA', 'HISTORICO', 'RESUMEN'] },
+                quiz('Clasifica lo encontrado', '¿Cuál de estas opciones describe una biografía?', [
+                  'Un texto que cuenta hechos de la vida de una persona.',
+                  'Una lista de instrucciones para jugar.',
+                  'Un diálogo inventado sin personajes reales.'
+                ], 0),
+                quiz('Detecta la noticia', '¿Qué información suele responder una noticia?', [
+                  'Qué pasó, dónde ocurrió y quiénes participaron.',
+                  'Solo qué opina el lector.',
+                  'Únicamente una lista de personajes fantásticos.'
+                ], 0),
+                write('Resume la pista', 'Escribe dos oraciones que expliquen la diferencia entre una noticia y una biografía.', 'Mi respuesta (al menos 20 palabras)', 'Una noticia..., en cambio, una biografía...', 20),
+                quiz('Desbloquea el texto', '¿Qué hace un buen resumen?', [
+                  'Conserva las ideas principales usando menos palabras.',
+                  'Copia cada detalle y repite las mismas ideas.',
+                  'Agrega datos que el texto no menciona.'
+                ], 0)
+              ]
+            },
+            3: {
+              title: 'Editores en acción',
+              subtitle: 'Corrige pistas de escritura, acentuación y puntuación.',
+              icon: '📝',
+              phases: [
+                quiz('Plan de escritura', '¿Qué paso ayuda a comenzar un texto organizado?', [
+                  'Definir el tema y ordenar las ideas antes de redactar.',
+                  'Entregar una primera frase sin revisar.',
+                  'Quitar el título y el propósito.'
+                ], 0),
+                quiz('Mayúsculas y puntuación', '¿Qué oración está escrita correctamente?', [
+                  'El lunes, Camila visitó el museo.',
+                  'el lunes camila visito el museo',
+                  'El lunes camila visitó el museo'
+                ], 0),
+                match('Acentos bajo la lupa', 'Une cada palabra con su clasificación.', [
+                  ['canción', 'Aguda'],
+                  ['árbol', 'Grave'],
+                  ['pájaro', 'Esdrújula']
+                ]),
+                quiz('Oraciones en equipo', '¿Cuál es una oración compuesta?', [
+                  'Lucía leyó y Mateo escribió.',
+                  'Lucía leyó.',
+                  'El libro azul.'
+                ], 0),
+                write('Corrige el mensaje', 'Reescribe correctamente esta oración: el miercoles juan leyo una biografia y escribio un resumen', 'Mi oración corregida (al menos 8 palabras)', 'El miércoles...', 8)
+              ]
+            },
+            4: {
+              title: 'Debate de ideas',
+              subtitle: 'Elige una postura, busca evidencias y responde con respeto.',
+              icon: '💬',
+              phases: [
+                quiz('Elige una postura', '¿Cuál es una postura clara para iniciar un debate sobre cuidar la biblioteca?', [
+                  'La biblioteca debe cuidarse porque todos podemos aprender allí.',
+                  'Biblioteca, lápiz, ventana.',
+                  'No sé y no quiero escuchar.'
+                ], 0),
+                quiz('Encuentra la evidencia', '¿Qué dato apoya mejor la idea de ampliar el tiempo de lectura?', [
+                  'Muchos estudiantes usan los libros durante el descanso.',
+                  'A mí me gusta el color de la pared.',
+                  'El viernes es un día de la semana.'
+                ], 0),
+                quiz('Respuesta respetuosa', '¿Cómo respondes a una opinión diferente?', [
+                  'Reconozco la idea y explico mi razón sin atacar a la persona.',
+                  'Digo que está equivocada y no la dejo hablar.',
+                  'Cambio el tema para evitar escuchar.'
+                ], 0),
+                write('Presenta tu argumento', 'Escribe una postura y al menos dos razones para defenderla.', 'Mi argumento (al menos 25 palabras)', 'Considero que... porque... Además...', 25),
+                quiz('Construye la oración', '¿Cuál es una oración simple?', [
+                  'El grupo preparó sus argumentos.',
+                  'El grupo leyó y luego escribió sus argumentos.',
+                  'Cuando llegó el grupo.'
+                ], 0)
+              ]
+            },
+            5: {
+              title: 'Escape room: ensayo y resumen',
+              subtitle: 'Resuelve los acertijos de escritura para abrir la salida.',
+              icon: '🗝️',
+              phases: [
+                escape('Candado 1: la estructura', '¿Qué orden organiza un ensayo breve?', [
+                  'Introducción, desarrollo y conclusión.',
+                  'Conclusión, título y una idea repetida.',
+                  'Solo una lista de palabras.'
+                ], 0),
+                escape('Candado 2: la idea central', '¿Qué debe presentar la introducción?', [
+                  'El tema y la idea que se desarrollará.',
+                  'Todos los detalles sin explicar el tema.',
+                  'Una conclusión que no se relaciona.'
+                ], 0),
+                escape('Candado 3: el resumen secreto', '¿Qué información debes conservar al resumir una fuente?', [
+                  'Las ideas principales expresadas brevemente.',
+                  'Cada ejemplo y repetición del texto.',
+                  'Opiniones inventadas que no aparecen.'
+                ], 0),
+                escape('Candado 4: revisión final', '¿Qué revisión mejora un ensayo antes de entregarlo?', [
+                  'Comprobar el orden, la puntuación y la claridad.',
+                  'Borrar los conectores y dejar frases incompletas.',
+                  'Cambiar el tema en cada párrafo.'
+                ], 0),
+                escape('Candado final: abre la salida', 'Completa el código escribiendo una idea central y una conclusión relacionadas.', [
+                  'Escribiré mi idea y cerraré retomando el tema.',
+                  'Copiaré frases sin relacionarlas.',
+                  'Terminaré sin conclusión.'
+                ], 0, { label: 'Tu idea central y conclusión (al menos 20 palabras)', placeholder: 'Mi ensayo trata de... En conclusión...', minWords: 20 })
+              ]
+            }
+          }
+        };
+        const mission = catalogs[grade] && catalogs[grade][missionNumber];
+        if (!mission) throw new Error('El reto seleccionado no está disponible.');
+        return {
+          ...mission,
+          phases: mission.phases.map((phase, index) => ({
+            ...phase,
+            label: `FASE ${index + 1} DE 5`,
+            prompt: phase.prompt || phase.question,
+            tip: phase.tip || 'Lee con atención, usa las pistas y revisa tu respuesta antes de comprobar.',
+            hint: phase.hint || phase.question,
+            points: index === 4 ? 'Hasta 10 puntos' : index === 3 ? 'Hasta 30 puntos' : 'Hasta 20 puntos',
+            maxPoints: index === 4 ? 10 : index === 3 ? 30 : 20
+          }))
+        };
+      }
+
+      function runMission(grade, missionNumber) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const requestedPhase = searchParams.has('fase')
+        ? searchParams.get('fase')
+        : searchParams.get('reto');
+      const phaseIndex = Math.min(Math.max(Number(requestedPhase) || 1, 1), 5) - 1;
       const passage = grade === 4
         ? 'El martes, los estudiantes de cuarto organizaron una pequeña huerta junto a la biblioteca. Sembraron semillas de fríjol y nombraron encargada del riego a Sara. La profesora explicó que observarían las plantas durante varias semanas y escribirían una noticia sobre su crecimiento. Al terminar la jornada, el grupo anotó la fecha y midió la tierra para comparar los cambios.'
         : 'En la semana cultural, el grupo de quinto preparó una obra corta para compartirla con las familias. Primero resumieron una leyenda local y organizaron sus ideas en un escrito. Después repartieron los personajes y ensayaron gestos para representar algunas escenas sin palabras. Al final, cada equipo presentó su trabajo y explicó cómo colaboró para que el público comprendiera la historia.';
-      const phases = grade === 4 ? [
+      const firstMissionPhases = grade === 4 ? [
         {
           title: 'Escuchar y comprender una noticia',
           label: 'FASE 1 DE 5',
@@ -218,10 +502,11 @@
         }
       ];
 
+      const weeklyMission = missionNumber === 1 ? null : getWeeklyMission(grade, missionNumber);
+      const phases = missionNumber === 1 ? firstMissionPhases : weeklyMission.phases;
       const pointsKey = `${window.lectoMenteStoragePrefix}-puntos`;
-      const progressKey = `${window.lectoMenteStoragePrefix}-mision`;
+      const progressKey = `${window.lectoMenteStoragePrefix}-mision-${missionNumber}`;
       const completedChallengesKey = `${window.lectoMenteStoragePrefix}-retos-completados`;
-      const phaseIndex = Math.min(Math.max(Number(new URLSearchParams(window.location.search).get('reto')) || 1, 1), phases.length) - 1;
       const phase = phases[phaseIndex];
       const activity = document.getElementById('retoActivity');
       const feedback = document.getElementById('retoFeedback');
@@ -233,7 +518,9 @@
       let points = Number(localStorage.getItem(pointsKey)) || 0;
 
       try {
-        progress = JSON.parse(localStorage.getItem(progressKey) || 'null') || {
+        const savedLocalProgress = localStorage.getItem(progressKey)
+          || (missionNumber === 1 ? localStorage.getItem(`${window.lectoMenteStoragePrefix}-mision`) : null);
+        progress = JSON.parse(savedLocalProgress || 'null') || {
           lives: 3,
           completed: {},
           awarded: {},
@@ -244,9 +531,15 @@
         console.error('No se pudo cargar el progreso de la misión.', error);
         progress = { lives: 3, completed: {}, awarded: {}, hints: {}, evidence: {} };
       }
+      if (missionNumber === 1) {
+        localStorage.setItem(progressKey, JSON.stringify(progress));
+      }
 
       function saveProgress() {
         localStorage.setItem(progressKey, JSON.stringify(progress));
+        if (missionNumber === 1) {
+          localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision`, JSON.stringify(progress));
+        }
         localStorage.setItem(pointsKey, points);
         window.clearTimeout(cloudSaveTimer);
         cloudSaveTimer = window.setTimeout(() => {
@@ -267,6 +560,7 @@
           grade,
           points,
           completedChallenges,
+          missionNumber,
           mission: progress
         });
       }
@@ -285,10 +579,8 @@
           console.error('No se pudo cargar el progreso de los retos semanales.', error);
         }
 
-        if (!completedChallenges.includes(challengeNumber)) {
-          completedChallenges.push(challengeNumber);
-          localStorage.setItem(completedChallengesKey, JSON.stringify(completedChallenges));
-        }
+        if (!completedChallenges.includes(challengeNumber)) completedChallenges.push(challengeNumber);
+        localStorage.setItem(completedChallengesKey, JSON.stringify(completedChallenges));
       }
 
       function updateScore() {
@@ -312,7 +604,7 @@
         }
         progress.completed[phaseIndex] = true;
         saveProgress();
-        if (phases.every((_, index) => progress.completed[index])) markChallengeComplete(1);
+        if (phases.every((_, index) => progress.completed[index])) markChallengeComplete(missionNumber);
         saveProgress();
         window.clearTimeout(cloudSaveTimer);
         cloudSaveTimer = undefined;
@@ -364,6 +656,253 @@
         button.textContent = label;
         button.addEventListener('click', handler);
         activity.appendChild(button);
+      }
+
+      function renderGamePhase() {
+        const phaseKey = `weekly-${missionNumber}-${phaseIndex}`;
+        const icon = document.createElement('div');
+        icon.className = 'game-illustration';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = weeklyMission.icon;
+        activity.appendChild(icon);
+
+        if (phase.kind === 'match') {
+          const matches = progress.evidence[`${phaseKey}-matches`] || {};
+          const question = document.createElement('p');
+          question.className = 'activity-question';
+          question.textContent = phase.question;
+          activity.appendChild(question);
+          const matchArea = document.createElement('div');
+          matchArea.className = 'matching-game';
+          phase.pairs.forEach(([term], index) => {
+            const row = document.createElement('label');
+            row.className = 'matching-row';
+            const termElement = document.createElement('strong');
+            termElement.textContent = term;
+            const select = document.createElement('select');
+            select.setAttribute('aria-label', `Significado de ${term}`);
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = 'Elige un significado';
+            select.appendChild(empty);
+            phase.pairs.forEach(([, definition], optionIndex) => {
+              const option = document.createElement('option');
+              option.value = String(optionIndex);
+              option.textContent = definition;
+              select.appendChild(option);
+            });
+            select.value = matches[String(index)] === undefined ? '' : String(matches[String(index)]);
+            select.addEventListener('change', () => {
+              matches[String(index)] = select.value;
+              progress.evidence[`${phaseKey}-matches`] = matches;
+              saveProgress();
+            });
+            row.append(termElement, select);
+            matchArea.appendChild(row);
+          });
+          activity.appendChild(matchArea);
+          addSubmitButton('Comprobar las parejas', () => {
+            const complete = phase.pairs.every((_, index) => matches[String(index)] !== undefined && matches[String(index)] !== '');
+            if (!complete) {
+              recordMistake('Une cada concepto con un significado antes de comprobar.');
+              return;
+            }
+            const correct = phase.pairs.every((_, index) => Number(matches[String(index)]) === index);
+            if (!correct) {
+              recordMistake('Algunas parejas no coinciden. Revisa las definiciones y vuelve a intentarlo.');
+              return;
+            }
+            awardPhase(phase.maxPoints);
+          });
+          return;
+        }
+
+        if (phase.kind === 'wordsearch') {
+          renderWordSearch(phase, phaseKey);
+          return;
+        }
+
+        if (phase.kind === 'board') {
+          const board = document.createElement('div');
+          board.className = 'game-board';
+          phases.forEach((item, index) => {
+            const space = document.createElement('span');
+            space.className = `game-board-space${index === phaseIndex ? ' current' : ''}${progress.completed[index] ? ' visited' : ''}`;
+            space.textContent = progress.completed[index] ? '✓' : String(index + 1);
+            board.appendChild(space);
+          });
+          activity.appendChild(board);
+        }
+
+        if (phase.kind === 'escape') {
+          const locks = document.createElement('div');
+          locks.className = 'escape-locks';
+          phases.forEach((item, index) => {
+            const lock = document.createElement('span');
+            lock.className = `escape-lock${progress.completed[index] ? ' opened' : ''}${index === phaseIndex ? ' current' : ''}`;
+            lock.textContent = progress.completed[index] ? '🔓' : '🔒';
+            lock.setAttribute('aria-label', progress.completed[index] ? `Candado ${index + 1} abierto` : `Candado ${index + 1}`);
+            locks.appendChild(lock);
+          });
+          activity.appendChild(locks);
+        }
+
+        if (phase.kind === 'writing') {
+          const response = createField(
+            phase.field.label,
+            `${phaseKey}-response`,
+            phase.field.placeholder,
+            5
+          );
+          addSubmitButton('Guardar mi respuesta', () => {
+            if (countWords(response.value) < phase.field.minWords) {
+              recordMistake(`Completa tu respuesta con al menos ${phase.field.minWords} palabras.`);
+              return;
+            }
+            awardPhase(phase.maxPoints);
+          });
+          return;
+        }
+
+        const question = document.createElement('p');
+        question.className = 'activity-question';
+        question.textContent = phase.question;
+        const optionList = document.createElement('div');
+        optionList.className = 'reto-options';
+        const savedChoiceKey = `${phaseKey}-choice`;
+        let selected = progress.evidence[savedChoiceKey] || '';
+        phase.options.forEach((option, index) => {
+          const label = document.createElement('label');
+          label.className = 'choice-option';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = savedChoiceKey;
+          radio.value = String(index);
+          radio.checked = selected === String(index);
+          radio.addEventListener('change', () => {
+            selected = radio.value;
+            progress.evidence[savedChoiceKey] = selected;
+            saveProgress();
+          });
+          label.append(radio, document.createTextNode(option));
+          optionList.appendChild(label);
+        });
+        activity.append(question, optionList);
+        let response;
+        if (phase.field) {
+          response = createField(
+            phase.field.label,
+            `${phaseKey}-response`,
+            phase.field.placeholder,
+            4
+          );
+        }
+        const buttonLabel = phase.kind === 'escape'
+          ? 'Probar la clave'
+          : phase.kind === 'board'
+            ? 'Avanzar una casilla'
+            : 'Comprobar respuesta';
+        addSubmitButton(buttonLabel, () => {
+          if (selected === '') {
+            recordMistake('Elige una respuesta antes de continuar.');
+            return;
+          }
+          if (Number(selected) !== phase.answer) {
+            recordMistake('Esa opción no abre el desafío. Lee la pista y prueba otra vez.');
+            return;
+          }
+          if (response && countWords(response.value) < phase.field.minWords) {
+            recordMistake(`Completa tu respuesta con al menos ${phase.field.minWords} palabras.`);
+            return;
+          }
+          awardPhase(phase.maxPoints);
+        });
+      }
+
+      function renderWordSearch(phase, phaseKey) {
+        const width = 12;
+        const filler = 'LECTOMENTEAPRENDEJUGANDO';
+        const foundWords = progress.evidence[`${phaseKey}-found`] || [];
+        const starts = [];
+        let selection = [];
+        const board = document.createElement('div');
+        board.className = 'word-search-grid';
+        const status = document.createElement('p');
+        status.className = 'field-help';
+        const wordList = document.createElement('ul');
+        wordList.className = 'word-search-list';
+
+        function updateStatus() {
+          status.textContent = `Palabras encontradas: ${foundWords.length} de ${phase.words.length}.`;
+          wordList.replaceChildren();
+          phase.words.forEach((word) => {
+            const item = document.createElement('li');
+            item.textContent = `${foundWords.includes(word) ? '✓ ' : '○ '}${word}`;
+            if (foundWords.includes(word)) item.className = 'word-found';
+            wordList.appendChild(item);
+          });
+        }
+
+        const grid = phase.words.map((word, row) => {
+          const letters = Array.from({ length: width }, (_, index) => filler[(row * 5 + index) % filler.length]);
+          const start = Math.min(row, width - word.length);
+          starts.push(start);
+          [...word].forEach((letter, index) => { letters[start + index] = letter; });
+          return letters;
+        });
+        grid.forEach((letters, rowIndex) => {
+          letters.forEach((letter, columnIndex) => {
+            const cell = document.createElement('button');
+            cell.type = 'button';
+            cell.className = 'word-search-cell';
+            if (foundWords.includes(phase.words[rowIndex])
+              && columnIndex >= starts[rowIndex]
+              && columnIndex < starts[rowIndex] + phase.words[rowIndex].length) {
+              cell.classList.add('found');
+            }
+            cell.textContent = letter;
+            cell.setAttribute('aria-label', `Fila ${rowIndex + 1}, columna ${columnIndex + 1}: ${letter}`);
+            cell.addEventListener('click', () => {
+              const previous = selection[selection.length - 1];
+              if (!previous || previous.row !== rowIndex || Math.abs(previous.column - columnIndex) !== 1) {
+                selection = [{ row: rowIndex, column: columnIndex, cell }];
+              } else {
+                selection.push({ row: rowIndex, column: columnIndex, cell });
+              }
+              const candidate = selection.map((item) => grid[item.row][item.column]).join('');
+              const possible = phase.words.some((word) => !foundWords.includes(word)
+                && (word.startsWith(candidate) || [...word].reverse().join('').startsWith(candidate)));
+              if (!possible && selection.length > 1) {
+                selection = [{ row: rowIndex, column: columnIndex, cell }];
+              }
+              board.querySelectorAll('.word-search-cell').forEach((item) => item.classList.remove('selected'));
+              selection.forEach((item) => item.cell.classList.add('selected'));
+              const word = selection.map((item) => grid[item.row][item.column]).join('');
+              const reversed = [...word].reverse().join('');
+              const match = phase.words.find((candidate) => !foundWords.includes(candidate)
+                && (candidate === word || candidate === reversed));
+              if (match) {
+                foundWords.push(match);
+                progress.evidence[`${phaseKey}-found`] = foundWords;
+                saveProgress();
+                selection.forEach((item) => item.cell.classList.add('found'));
+                selection = [];
+                updateStatus();
+                setFeedback(`¡Encontraste ${match}! Sigue buscando las demás palabras.`, 'success');
+              }
+            });
+            board.appendChild(cell);
+          });
+        });
+        activity.append(board, status, wordList);
+        updateStatus();
+        addSubmitButton('Completar la sopa de letras', () => {
+          if (foundWords.length !== phase.words.length) {
+            recordMistake('Busca todas las palabras de la lista; aparecen en horizontal.');
+            return;
+          }
+          awardPhase(phase.maxPoints);
+        });
       }
 
       function renderPhaseOne() {
@@ -753,17 +1292,23 @@
         });
       }
 
-      const missionName = grade === 4
-        ? 'La noticia de la huerta escolar'
-        : 'La semana cultural: resumen, mímica y teatro';
+      const missionName = missionNumber === 1
+        ? grade === 4 ? 'La noticia de la huerta escolar' : 'La semana cultural: resumen, mímica y teatro'
+        : weeklyMission.title;
       document.title = `${phase.title} | ${missionName}`;
       document.getElementById('missionTitle').textContent = missionName;
       document.getElementById('retoBrandTitle').textContent = missionName;
-      document.getElementById('missionSidebarTitle').textContent = grade === 4 ? 'La huerta escolar' : 'Semana cultural';
+      document.getElementById('missionSidebarTitle').textContent = missionNumber === 1
+        ? grade === 4 ? 'La huerta escolar' : 'Semana cultural'
+        : `Reto semanal ${missionNumber}`;
       document.getElementById('missionFooter').textContent = missionName;
       document.getElementById('missionSummaryText').textContent = grade === 4
-        ? 'Escucha una noticia, practica la escritura y comparte argumentos en un debate.'
-        : 'Resume un texto, organiza un trabajo y crea una presentación teatral.';
+        ? missionNumber === 1
+          ? 'Escucha una noticia, practica la escritura y comparte argumentos en un debate.'
+          : weeklyMission.subtitle
+        : missionNumber === 1
+          ? 'Resume un texto, organiza un trabajo y crea una presentación teatral.'
+          : weeklyMission.subtitle;
       document.getElementById('retoCount').textContent = phase.label;
       document.getElementById('retoPoints').textContent = phase.points;
       document.getElementById('retoTitle').textContent = phase.title;
@@ -774,7 +1319,7 @@
       phases.forEach((item, index) => {
         const step = document.createElement('a');
         step.className = `reto-step${index === phaseIndex ? ' active' : ''}${progress.completed[index] ? ' completed' : ''}`;
-        step.href = `reto.html?reto=${index + 1}`;
+        step.href = `reto.html?mision=${missionNumber}&fase=${index + 1}`;
         step.setAttribute('aria-current', index === phaseIndex ? 'step' : 'false');
         step.innerHTML = `<span class="reto-step-number">${progress.completed[index] ? '✓' : index + 1}</span><span>${item.title}</span>`;
         document.getElementById('phaseNav').appendChild(step);
@@ -790,12 +1335,17 @@
       });
 
       const renderers = [renderPhaseOne, renderPhaseTwo, renderPhaseThree, renderPhaseFour, renderPhaseFive];
-      renderers[phaseIndex]();
+      if (missionNumber === 1) renderers[phaseIndex]();
+      else renderGamePhase();
       const previousLink = document.getElementById('previousReto');
       const nextLink = document.getElementById('nextReto');
-      previousLink.href = phaseIndex === 0 ? 'index.html#retos' : `reto.html?reto=${phaseIndex}`;
-      nextLink.href = phaseIndex === phases.length - 1 ? 'index.html#retos' : `reto.html?reto=${phaseIndex + 2}`;
-      if (phaseIndex === 0) previousLink.textContent = 'Volver a la misión';
+      previousLink.href = phaseIndex === 0
+        ? 'index.html#retos'
+        : `reto.html?mision=${missionNumber}&fase=${phaseIndex}`;
+      nextLink.href = phaseIndex === phases.length - 1
+        ? 'index.html#retos'
+        : `reto.html?mision=${missionNumber}&fase=${phaseIndex + 2}`;
+      if (phaseIndex === 0) previousLink.textContent = 'Volver a los retos';
       if (phaseIndex === phases.length - 1) nextLink.textContent = 'Finalizar';
       [previousLink, nextLink, ...document.querySelectorAll('#phaseNav a')].forEach((link) => {
         link.addEventListener('click', async (event) => {
@@ -828,16 +1378,40 @@
         }
         window.lectoMenteStoragePrefix = `lectomente-usuario-${user.id}-grado-${user.grade}`;
         const savedGradeData = user.gradeData && user.gradeData[String(user.grade)];
+        const requestedMission = Number(new URLSearchParams(window.location.search).get('mision')) || 1;
+        if (!Number.isInteger(requestedMission) || requestedMission < 1 || requestedMission > 5) {
+          window.location.replace('index.html#retos');
+          return;
+        }
         if (savedGradeData) {
           localStorage.setItem(`${window.lectoMenteStoragePrefix}-puntos`, savedGradeData.points || 0);
           localStorage.setItem(`${window.lectoMenteStoragePrefix}-retos-completados`, JSON.stringify(savedGradeData.completedChallenges || []));
-          if (savedGradeData.mission) {
-            localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision`, JSON.stringify(savedGradeData.mission));
+          const savedMissions = savedGradeData.missions || {};
+          Object.entries(savedMissions).forEach(([number, missionProgress]) => {
+            localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision-${number}`, JSON.stringify(missionProgress));
+          });
+          const firstMissionProgress = savedMissions['1'] || savedGradeData.mission;
+          if (firstMissionProgress) {
+            localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision`, JSON.stringify(firstMissionProgress));
+            localStorage.setItem(`${window.lectoMenteStoragePrefix}-mision-1`, JSON.stringify(firstMissionProgress));
           }
+        }
+        let completedChallenges = [];
+        try {
+          const savedChallenges = savedGradeData
+            ? savedGradeData.completedChallenges
+            : JSON.parse(localStorage.getItem(`${window.lectoMenteStoragePrefix}-retos-completados`) || '[]');
+          if (Array.isArray(savedChallenges)) completedChallenges = savedChallenges;
+        } catch (error) {
+          console.error('No se pudo cargar el progreso de los retos semanales.', error);
+        }
+        if (requestedMission > 1 && !completedChallenges.includes(requestedMission - 1)) {
+          window.location.replace('index.html#retos');
+          return;
         }
         document.querySelector('.challenge-audience').textContent = `Para estudiantes de ${user.grade === 4 ? 'cuarto' : 'quinto'} grado de primaria`;
         document.querySelector('.mission-tag').textContent = `Misión de aprendizaje · ${user.grade === 4 ? 'Cuarto' : 'Quinto'} grado`;
-        runMission(user.grade);
+        runMission(user.grade, requestedMission);
       }).catch((error) => {
         console.error('No se pudo comprobar la sesión para abrir la misión.', error);
         const message = document.getElementById('retoFeedback');

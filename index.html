@@ -231,32 +231,36 @@
           <h2 id="challengesTitle" class="section-title challenge-heading">Retos semanales</h2>
           <p class="challenge-schedule">Completa un reto para desbloquear el siguiente. Hay cinco retos en total.</p>
           <div class="weekly-challenges">
-            <a class="challenge-card weekly-challenge-card" href="reto.html?reto=1" data-challenge="1">
+            <a class="challenge-card weekly-challenge-card" data-challenge="1">
               <span class="challenge-status"></span>
               <h3>Reto semanal 1</h3>
-              <p id="challengeDescription">Actividades de lectura, escritura y expresión</p>
+              <p class="challenge-description" id="challengeDescription">Actividades de lectura, escritura y expresión</p>
               <span class="challenge-link-label">Abrir desafío →</span>
             </a>
-            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="2" aria-disabled="true">
+            <a class="challenge-card weekly-challenge-card is-locked" data-challenge="2" aria-disabled="true">
               <span class="challenge-status"></span>
               <h3>Reto semanal 2</h3>
-              <p class="challenge-placeholder"></p>
-            </article>
-            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="3" aria-disabled="true">
+              <p class="challenge-description"></p>
+              <span class="challenge-link-label">Abrir desafío →</span>
+            </a>
+            <a class="challenge-card weekly-challenge-card is-locked" data-challenge="3" aria-disabled="true">
               <span class="challenge-status"></span>
               <h3>Reto semanal 3</h3>
-              <p class="challenge-placeholder"></p>
-            </article>
-            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="4" aria-disabled="true">
+              <p class="challenge-description"></p>
+              <span class="challenge-link-label">Abrir desafío →</span>
+            </a>
+            <a class="challenge-card weekly-challenge-card is-locked" data-challenge="4" aria-disabled="true">
               <span class="challenge-status"></span>
               <h3>Reto semanal 4</h3>
-              <p class="challenge-placeholder"></p>
-            </article>
-            <article class="challenge-card weekly-challenge-card is-locked" data-challenge="5" aria-disabled="true">
+              <p class="challenge-description"></p>
+              <span class="challenge-link-label">Abrir desafío →</span>
+            </a>
+            <a class="challenge-card weekly-challenge-card is-locked" data-challenge="5" aria-disabled="true">
               <span class="challenge-status"></span>
               <h3>Reto semanal 5</h3>
-              <p class="challenge-placeholder"></p>
-            </article>
+              <p class="challenge-description"></p>
+              <span class="challenge-link-label">Abrir desafío →</span>
+            </a>
           </div>
         </section>
         <nav class="section-pager" aria-label="Cambiar de página">
@@ -454,15 +458,42 @@
       }
 
       function renderWeeklyChallenges() {
+        const descriptions = currentUser.grade === 4
+          ? [
+            'Noticia escolar, escritura y debate',
+            'Une conceptos para descubrir cómo resumir',
+            'Planea y revisa un texto paso a paso',
+            'Resuelve desafíos de mímica y debate',
+            'Avanza por un tablero de exposición y teatro'
+          ]
+          : [
+            'Resumen, trabajo escrito, mímica y teatro',
+            'Sopa de letras de textos informativos',
+            'Conviértete en editor: revisa y corrige',
+            'Construye argumentos para un debate',
+            'Escapa resolviendo el ensayo y el resumen'
+          ];
         document.querySelectorAll('.weekly-challenge-card').forEach((card) => {
           const challengeNumber = Number(card.dataset.challenge);
           const status = card.querySelector('.challenge-status');
           const isUnlocked = challengeNumber === 1 || completedChallenges.includes(challengeNumber - 1);
           const isComplete = completedChallenges.includes(challengeNumber);
+          const linkLabel = card.querySelector('.challenge-link-label');
 
           card.classList.toggle('is-locked', !isUnlocked);
           card.classList.toggle('is-unlocked', isUnlocked && challengeNumber > 1);
           card.classList.toggle('is-complete', isComplete);
+          card.querySelector('.challenge-description').textContent = descriptions[challengeNumber - 1];
+          card.href = `reto.html?mision=${challengeNumber}&fase=1`;
+          if (isUnlocked) {
+            card.removeAttribute('aria-disabled');
+            card.removeAttribute('tabindex');
+          } else {
+            card.setAttribute('aria-disabled', 'true');
+            card.setAttribute('tabindex', '-1');
+            card.removeAttribute('href');
+          }
+          linkLabel.textContent = isComplete ? 'Revisar reto →' : 'Abrir desafío →';
 
           if (challengeNumber === 1) {
             status.textContent = isComplete ? 'Completado' : 'Disponible';
@@ -471,13 +502,10 @@
 
           if (isComplete) {
             status.textContent = 'Completado';
-            card.querySelector('.challenge-placeholder').textContent = 'Reto completado.';
           } else if (isUnlocked) {
             status.textContent = 'Desbloqueado';
-            card.querySelector('.challenge-placeholder').textContent = 'Contenido pendiente.';
           } else {
             status.textContent = 'Bloqueado';
-            card.querySelector('.challenge-placeholder').textContent = '';
           }
         });
       }
