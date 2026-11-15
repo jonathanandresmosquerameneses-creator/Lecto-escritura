@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Informe docente | LectoMente</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="docente.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html">
+          <span class="brand-badge" aria-hidden="true">🎵</span>
+          <span>LectoMente</span>
+        </a>
+        <a class="secondary-btn" href="index.html">Volver al sitio</a>
+      </header>
+
+      <main class="teacher-page">
+        <section class="auth-card" aria-labelledby="teacherTitle">
+          <span class="eyebrow">Acceso privado</span>
+          <h1 id="teacherTitle">Informe de progreso</h1>
+          <p>Consulta el avance y las respuestas registradas en los retos de cuarto y quinto.</p>
+          <form id="reportForm" class="auth-form">
+            <div class="field-group">
+              <label for="reportToken">Clave docente</label>
+              <input id="reportToken" name="token" type="password" maxlength="256" autocomplete="off" required />
+            </div>
+            <button id="reportSubmit" class="primary-btn form-btn" type="submit">Consultar progreso</button>
+          </form>
+          <p id="reportStatus" class="teacher-status" role="status" aria-live="polite"></p>
+          <p class="teacher-privacy-note">Este informe contiene información académica privada. Descárgalo solo en un dispositivo seguro y no lo compartas públicamente.</p>
+        </section>
+
+        <section id="reportResults" class="teacher-results" aria-labelledby="resultsTitle" hidden>
+          <div class="teacher-results-heading">
+            <div>
+              <span class="eyebrow">Datos guardados en Supabase</span>
+              <h2 id="resultsTitle">Progreso por estudiante y reto</h2>
+              <p id="studentCount"></p>
+            </div>
+            <button id="downloadReport" class="primary-btn" type="button" disabled>Descargar CSV</button>
+          </div>
+          <div class="teacher-table-wrap">
+            <table class="teacher-table">
+              <thead>
+                <tr>
+                  <th scope="col">Estudiante</th>
+                  <th scope="col">Grado</th>
+                  <th scope="col">Reto</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fases completadas</th>
+                  <th scope="col">Puntos del reto</th>
+                  <th scope="col">Respuestas guardadas</th>
+                </tr>
+              </thead>
+              <tbody id="reportRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

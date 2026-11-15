@@ -65,7 +65,15 @@ const server = createServer(async (request, response) => {
 
     const requestedPath = url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname);
     const fileName = requestedPath.slice(1);
-    if (!['index.html', 'reto.html', 'styles.css', 'auth.js', 'supabase-config.js'].includes(fileName)) {
+    if (![
+      'index.html',
+      'reto.html',
+      'docente.html',
+      'docente.js',
+      'styles.css',
+      'auth.js',
+      'supabase-config.js'
+    ].includes(fileName)) {
       sendJson(response, 404, { error: 'Página no encontrada.' });
       return;
     }

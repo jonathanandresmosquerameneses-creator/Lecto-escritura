@@ -8,6 +8,18 @@
 
 La clave pública no reemplaza las políticas RLS. Mantén habilitada la seguridad por filas y no elimines las políticas del SQL.
 
+## Consultar y descargar el progreso docente
+
+El panel privado está en `docente.html` y solo consulta datos: no cambia cuentas, contraseñas ni progreso. Para habilitarlo en Netlify, abre **Site configuration → Environment variables** y configura:
+
+- `SUPABASE_URL`: la URL del proyecto Supabase.
+- `SUPABASE_SERVICE_ROLE_KEY`: la clave `service_role` de Supabase. Guárdala únicamente como variable privada de Netlify; nunca la pongas en archivos del sitio, GitHub ni en el navegador.
+- `TEACHER_REPORT_TOKEN`: una clave aleatoria de al menos 32 caracteres. No uses una contraseña de estudiante ni la compartas.
+
+Después de guardar las variables, vuelve a desplegar el sitio. Abre `docente.html`, introduce la clave `TEACHER_REPORT_TOKEN` y consulta o descarga el CSV. El reporte incluye nombres de usuario, grado, estado de cada reto y las respuestas guardadas por las actividades; no incluye correos ni contraseñas. El CSV contiene información académica privada: guárdalo en un dispositivo seguro y no lo compartas públicamente.
+
+Para desarrollo local, `npm start` sirve la página estática, pero no ejecuta la Netlify Function protegida. El panel de informes debe usarse en el sitio desplegado en Netlify.
+
 ## Publicar con GitHub y Netlify
 
 1. Sube el proyecto a GitHub, incluyendo `supabase-schema.sql`, `netlify.toml` y `supabase-config.js`. `.gitignore` excluye la base de datos local.
